@@ -1,0 +1,43 @@
+{
+  "name": "sequelize-mocking",
+  "version": "0.1.0",
+  "description": "A Sequelize extension to deal with mocking for tests",
+  "main": "index.js",
+  "scripts": {
+    "build-es5": "node ./node_modules/babel-cli/bin/babel.js lib --presets es2015 --out-dir lib-es5",
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rochejul/sequelize-mocking.git"
+  },
+  "keywords": [
+    "Sequelize",
+    "mocking",
+    "fixtures",
+    "test",
+    "mocha"
+  ],
+  "author": "Julien Roche",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rochejul/sequelize-mocking/issues"
+  },
+  "homepage": "https://github.com/rochejul/sequelize-mocking#readme",
+  "dependencies": {
+    "sequelize": "3.19.3",
+    "sequelize-fixtures": "0.4.8",
+    "sqlite3": "3.1.1"
+  },
+  "engines": {
+    "node": ">=4.0.0",
+    "npm": ">=2.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "6.5.1",
+    "babel-preset-es2015": "6.5.0",
+    "chai": "3.5.0",
+    "mocha": "2.4.5",
+    "sinon": "1.17.3"
+  }
+}
