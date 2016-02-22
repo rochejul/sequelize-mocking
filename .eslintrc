@@ -1,11 +1,8 @@
 {
     "parser": "espree",
     "env": {
-        "browser": false,
         "node": true,
-        "amd": false,
-        "mocha": false,
-        "jasmine": false
+        "es6": true
     },
     "globals": {
         "__dirname": true,
@@ -126,7 +123,7 @@
         "no-undefined": 0,
         "no-underscore-dangle": 1,
         "no-unreachable": 2,
-        "no-unused-expressions": 2,
+        "no-unused-expressions": 0,
         "no-unused-vars": [2, {"vars": "all", "args": "after-used"}],
         "no-use-before-define": 2,
         "no-void": 0,

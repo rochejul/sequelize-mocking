@@ -24,7 +24,7 @@ class Database {
         if (!instance) {
             instance = _DatabaseInstance.setCurrentInstance(new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
-                'dialect': 'sqlite',
+                'dialect': 'mysql',
                 'define': {
                     'engine': 'MYISAM',
                     'timestamps': false, // Don't create for each model the 'createdAt' and 'updatedAt' field
