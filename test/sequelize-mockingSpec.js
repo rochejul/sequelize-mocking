@@ -100,4 +100,129 @@ describe('SequelizeMocking - ', function () {
             });
         });
     });
+
+    describe('the method "copyModel" should ', function () {
+        it('exist', function () {
+            expect(SequelizeMocking.copyModel).to.exist;
+        });
+
+        it('duplicate a model with the same options', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let DuplicatedMyModel = SequelizeMocking.copyModel(mockedSequelizeInstance, MyModel);
+            expect(DuplicatedMyModel.name).equals(MyModel.name);
+            expect(_.omit(DuplicatedMyModel.options, 'sequelize')).deep.equals(_.omit(MyModel.options, 'sequelize'));
+        });
+
+        it('duplicate a model without keeping the references', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let DuplicatedMyModel = SequelizeMocking.copyModel(mockedSequelizeInstance, MyModel);
+            expect(DuplicatedMyModel).not.equals(MyModel);
+            expect(DuplicatedMyModel.options).not.equals(MyModel.options);
+            expect(DuplicatedMyModel.attributes).not.equals(MyModel.attributes);
+        });
+
+        it('duplicate a model with upgrading the modelManager of the Sequelize instance', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            expect(mockedSequelizeInstance.modelManager.all.length).equals(0);
+
+            let DuplicatedMyModel = SequelizeMocking.copyModel(mockedSequelizeInstance, MyModel);
+            expect(MyModel.options.sequelize).equals(sequelizeInstance);
+            expect(DuplicatedMyModel.options.sequelize).equals(mockedSequelizeInstance);
+
+            expect(sequelizeInstance.modelManager.all.length).equals(1);
+            expect(sequelizeInstance.modelManager).equals(MyModel.modelManager);
+            expect(sequelizeInstance.modelManager.all[0]).equals(MyModel);
+
+            expect(mockedSequelizeInstance.modelManager.all.length).equals(1);
+            expect(mockedSequelizeInstance.modelManager).equals(DuplicatedMyModel.modelManager);
+            expect(mockedSequelizeInstance.modelManager.all[0]).equals(MyModel);
+        });
+    });
 });
