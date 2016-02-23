@@ -26,9 +26,7 @@ class UserService {
      * @returns {Promise.<User>}
      */
     static find(userId) {
-        return UserModel.findById(userId, {
-            'raw': true
-        });
+        return UserModel.findById(userId);
     }
 }
 
