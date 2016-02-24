@@ -68,7 +68,7 @@ var SequelizeMocking = function () {
             var newModel = new Sequelize.Model(model.name, _.merge({}, model.attributes), _.merge({}, model.options, { 'sequelize': sequelizeInstance }));
 
             newModel = newModel.init(sequelizeInstance.modelManager);
-            sequelizeInstance.modelManager.addModel(model);
+            sequelizeInstance.modelManager.addModel(newModel);
             return newModel;
         }
 

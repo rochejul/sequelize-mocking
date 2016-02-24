@@ -11,6 +11,8 @@
 
 describe('SequelizeMocking - ', function () {
     const expect = require('chai').expect;
+    const sinon = require('sinon');
+
     const _ = require('lodash');
     const Sequelize = require('sequelize');
     const SequelizeMocking = require('../lib/sequelize-mocking');
@@ -222,7 +224,95 @@ describe('SequelizeMocking - ', function () {
 
             expect(mockedSequelizeInstance.modelManager.all.length).equals(1);
             expect(mockedSequelizeInstance.modelManager).equals(DuplicatedMyModel.modelManager);
-            expect(mockedSequelizeInstance.modelManager.all[0]).equals(MyModel);
+            expect(mockedSequelizeInstance.modelManager.all[0]).equals(DuplicatedMyModel);
+        });
+    });
+
+    describe('the method "copyCurrentModels" should ', function (){
+        it('exist', function () {
+            expect(SequelizeMocking.copyCurrentModels).to.exist;
+        });
+
+        it('copy the models of the first sequelize instance into the second one', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            expect(sequelizeInstance.modelManager.all.length).equals(1);
+            expect(mockedSequelizeInstance.modelManager.all.length).equals(0);
+
+            SequelizeMocking.copyCurrentModels(sequelizeInstance, mockedSequelizeInstance);
+
+            expect(sequelizeInstance.modelManager.all.length).equals(1);
+            expect(mockedSequelizeInstance.modelManager.all.length).equals(1);
+            expect(sequelizeInstance.modelManager.all[0]).not.equals(mockedSequelizeInstance.modelManager.all[0]);
+        });
+
+        it('use the "copyModel" function', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+
+            let spyCopyModel = sinon.spy(SequelizeMocking, 'copyModel');
+            SequelizeMocking.copyCurrentModels(sequelizeInstance, mockedSequelizeInstance);
+
+            spyCopyModel.restore();
+            expect(spyCopyModel.called).to.be.true;
+            expect(spyCopyModel.calledOnce).to.be.true;
+            expect(spyCopyModel.calledWith(mockedSequelizeInstance, MyModel)).to.be.true;
         });
     });
 });
