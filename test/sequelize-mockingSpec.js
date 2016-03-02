@@ -13,8 +13,11 @@ describe('SequelizeMocking - ', function () {
     const expect = require('chai').expect;
     const sinon = require('sinon');
 
+    const path = require('path');
     const _ = require('lodash');
+
     const Sequelize = require('sequelize');
+    const sequelizeFixtures = require('sequelize-fixtures');
     const SequelizeMocking = require('../lib/sequelize-mocking');
 
     it('shall exist', function () {
@@ -313,6 +316,276 @@ describe('SequelizeMocking - ', function () {
             expect(spyCopyModel.called).to.be.true;
             expect(spyCopyModel.calledOnce).to.be.true;
             expect(spyCopyModel.calledWith(mockedSequelizeInstance, MyModel)).to.be.true;
+        });
+    });
+
+    describe('and the method "loadFixtureFile" should ', function () {
+        it('exist', function () {
+            expect(SequelizeMocking.loadFixtureFile).to.exist;
+        });
+
+        it('call the map models function', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let stub = sinon.stub(sequelizeFixtures, 'loadFile', function () { return Promise.resolve(); });
+            let spy = sinon.spy(SequelizeMocking, 'mapModels');
+
+            SequelizeMocking.loadFixtureFile(sequelizeInstance, '/a/path/for/json/file');
+            stub.restore();
+            spy.restore();
+            expect(spy.called).to.be.true;
+            expect(spy.calledOnce).to.be.true;
+            expect(spy.calledWith(sequelizeInstance)).to.be.true;
+        });
+
+        it('should load the fixture models file and return into the Promise the sequelize instance', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            return sequelizeInstance
+                .sync()
+                .then(function () {
+                    return SequelizeMocking
+                        .loadFixtureFile(sequelizeInstance, path.resolve(path.join(__dirname, './my-model-database.json')));
+                })
+                .then(function (sequelize) {
+                    expect(sequelize).equals(sequelizeInstance);
+                });
+        });
+
+        it('should not log if the logging option is false', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let spy = sinon.spy(sequelizeFixtures, 'loadFile');
+            let filePath = path.resolve(path.join(__dirname, './my-model-database.json'));
+
+            return sequelizeInstance
+                .sync()
+                .then(function () {
+                    return SequelizeMocking
+                        .loadFixtureFile(sequelizeInstance, filePath, { 'logging': false });
+                })
+                .then(function () {
+                    expect(spy.firstCall.args).deep.equals([
+                        filePath,
+                        {
+                            'myModel': sequelizeInstance.modelManager.all[0]
+                        },
+                        {
+                            'encoding': 'utf8',
+                            'log': Sequelize.Utils._.noop
+                        }
+                    ]);
+                    spy.restore();
+                })
+                .catch(function (err) {
+                    spy.restore();
+                    throw err;
+                });
+        });
+    });
+
+    describe('and the method "mapModels" should ', function () {
+        it('exist', function () {
+            expect(SequelizeMocking.mapModels).to.exist;
+        });
+
+        it('return an empty map if no Sequelize models were defined', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let mapModels = SequelizeMocking.mapModels(sequelizeInstance);
+            expect(mapModels).to.be.defined;
+            expect(mapModels).to.be.empty;
+        });
+
+        it('return a map with the defined Sequelize model', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let mapModels = SequelizeMocking.mapModels(sequelizeInstance);
+            expect(mapModels).to.be.defined;
+            expect(mapModels).deep.equals({
+                'myModel': sequelizeInstance.modelManager.all[0]
+            });
+        });
+
+        it('return a map with the defined Sequelize models', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            sequelizeInstance.define('myModel1', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            sequelizeInstance.define('myModel2', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let mapModels = SequelizeMocking.mapModels(sequelizeInstance);
+            expect(mapModels).to.be.defined;
+            expect(mapModels).deep.equals({
+                'myModel1': sequelizeInstance.modelManager.all[0],
+                'myModel2': sequelizeInstance.modelManager.all[1]
+            });
+        });
+    });
+
+    describe('and the method "unhookNewModel" should ', function () {
+        it('exist', function () {
+            expect(SequelizeMocking.unhookNewModel).to.exist;
+        });
+
+        it('do nothing if the sequelize was not mocked', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            expect(function () {
+                SequelizeMocking.unhookNewModel(sequelizeInstance);
+            }).not.to.throw;
+        });
+
+        it('remove the hook on the original sequelize on the mocked sequelize', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            sequelizeInstance.__originalSequelize = {
+                'removeHook': function (eventName) {
+
+                }
+            };
+
+            let spy = sinon.spy(sequelizeInstance.__originalSequelize, 'removeHook');
+
+            SequelizeMocking.unhookNewModel(sequelizeInstance);
+            spy.restore();
+            expect(spy.called).to.be.true;
+            expect(spy.calledOnce).to.be.true;
+            expect(spy.calledWith('afterDefine')).to.be.true;
         });
     });
 });
