@@ -9,7 +9,7 @@
 const chai = require('chai');
 const sinon = require('sinon');
 
-describe('User - UserService - ', function () {
+describe('User - UserService (classical way) - ', function () {
     const UserService = require('../../lib/user/service');
     let UserModel = require('../../lib/user/model');
 

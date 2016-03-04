@@ -9,9 +9,9 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const path = require('path');
-const SequelizeMock = require('sequelize-mocking').SequelizeMock;
+const SequelizeMocking = require('sequelize-mocking').SequelizeMocking;
 
-describe('User - UserService - ', function () {
+describe('User - UserService (using SequelizeMocking) - ', function () {
     const Database = require('../../lib/database');
     const UserService = require('../../lib/user/service');
     const UserModel = require('../../lib/user/model');
@@ -31,7 +31,7 @@ describe('User - UserService - ', function () {
     let sequelizeInstance = null;
 
     beforeEach(function (done) {
-        SequelizeMock
+        SequelizeMocking
             .createAndLoadFixtureFile(Database.getInstance(), path.resolve(path.join(__dirname, './fake-users-database.json')))
             .then(function (mockedSequelizeInstance) {
                 sequelizeInstance = mockedSequelizeInstance;
@@ -41,7 +41,7 @@ describe('User - UserService - ', function () {
     });
 
     afterEach(function (done) {
-        SequelizeMock
+        SequelizeMocking
             .restore(sequelizeInstance)
             .then(function () {
                 done();

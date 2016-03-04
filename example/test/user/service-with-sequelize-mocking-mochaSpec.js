@@ -9,9 +9,9 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const path = require('path');
-const sequelizeMockMocha = require('sequelize-mocking-mocha').sequelizeMockMocha;
+const sequelizeMockingMocha = require('sequelize-mocking').sequelizeMockingMocha;
 
-describe('User - UserService - ', function () {
+describe('User - UserService (using sequelizeMockingMocha) - ', function () {
     const Database = require('../../lib/database');
     const UserService = require('../../lib/user/service');
     const UserModel = require('../../lib/user/model');
@@ -28,7 +28,7 @@ describe('User - UserService - ', function () {
     });
 
     // Load fake data for the users
-    sequelizeMockMocha(
+    sequelizeMockingMocha(
         Database.getInstance(),
         path.resolve(path.join(__dirname, './fake-users-database.json')),
         { 'logging': false }
