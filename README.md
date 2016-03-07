@@ -1,4 +1,9 @@
 # sequelize-mocking
+
+[![Build Status](https://travis-ci.org/rochejul/sequelize-mocking.svg?branch=master)](https://travis-ci.org/rochejul/sequelize-mocking)[![Dependency Status](https://david-dm.org/rochejul/sequelize-mocking.svg)](https://david-dm.org/rochejul/sequelize-mocking)
+[![devDependency Status](https://david-dm.org/rochejul/sequelize-mocking/dev-status.svg)](https://david-dm.org/rochejul/sequelize-mocking#info=devDependencies)
+
+
 Sequelize extension to deal with data-mocking for testing
 
 It will use the sqlite database for mocked database, will recreate it for database.
