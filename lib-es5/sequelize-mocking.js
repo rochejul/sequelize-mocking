@@ -103,6 +103,7 @@ var SequelizeMocking = function () {
             mockedSequelize.__originalSequelize = originalSequelize;
 
             SequelizeMocking.copyCurrentModels(originalSequelize, mockedSequelize);
+            SequelizeMocking.modifyModelReferences(originalSequelize, mockedSequelize);
             SequelizeMocking.hookNewModel(originalSequelize, mockedSequelize, options);
 
             logging && console.log('SequelizeMocking - Mock the context');
@@ -144,7 +145,7 @@ var SequelizeMocking = function () {
             var logging = !options || options.logging;
 
             originalSequelize.addHook(AFTER_DEFINE_EVENT, function (newModel) {
-                SequelizeMocking.copyModel(mockedSequelize, newModel).sync({ 'hooks': true }).then(function () {
+                SequelizeMocking.modifyModelReference(mockedSequelize, SequelizeMocking.copyModel(mockedSequelize, newModel)).sync({ 'hooks': true }).then(function () {
                     logging && console.log('Model ' + newModel.name + ' was declared into the database');
                 }).catch(function (err) {
                     logging && console.error('An error occured when initializing the model ' + newModel.name);
@@ -189,6 +190,38 @@ var SequelizeMocking = function () {
         }
 
         /**
+         * Goal: the instanciate model shall use another instance of @{Sequelize} than the one used to create the model
+         *
+         * @param {Sequelize} newSequelizeToUse
+         * @param {Sequelize.Model} model
+         * @returns {Sequelize.Model}
+         */
+
+    }, {
+        key: 'modifyModelReference',
+        value: function modifyModelReference(newSequelizeToUse, model) {
+            model.init(newSequelizeToUse.modelManager);
+            model.sequelize = newSequelizeToUse;
+            return model;
+        }
+
+        /**
+         * @param {Sequelize} originalSequelize
+         * @param {Sequelize} newSequelizeToUse
+         * @returns {Sequelize} The new Sequelize object
+         */
+
+    }, {
+        key: 'modifyModelReferences',
+        value: function modifyModelReferences(originalSequelize, newSequelizeToUse) {
+            originalSequelize.modelManager.all.forEach(function (model) {
+                SequelizeMocking.modifyModelReference(newSequelizeToUse, model);
+            });
+
+            return newSequelizeToUse;
+        }
+
+        /**
          * @param {Sequelize} mockedSequelize
          * @param {SequelizeMockingOptions} [options]
          * @returns {Promise}
@@ -202,10 +235,10 @@ var SequelizeMocking = function () {
             SequelizeMocking.unhookNewModel(mockedSequelize);
 
             if (mockedSequelize.__originalSequelize) {
-                mockedSequelize.__originalSequelize.modelManager.all.forEach(function (model) {
-                    model.modelManager = mockedSequelize.__originalSequelize.modelManager;
-                });
+                SequelizeMocking.modifyModelReferences(mockedSequelize, mockedSequelize.__originalSequelize);
             }
+
+            delete mockedSequelize.__originalSequelize;
 
             logging && console.log('SequelizeMocking - restore the context');
             return mockedSequelize.drop({ 'logging': logging }).then(function () {
