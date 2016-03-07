@@ -25,6 +25,16 @@ describe('SequelizeMocking - ', function () {
         expect(SequelizeMocking).not.to.be.empty;
     });
 
+    let sinonSandbox;
+
+    beforeEach(function () {
+        sinonSandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function () {
+        sinonSandbox.restore();
+    });
+
     describe('and the method "adaptSequelizeOptions" should ', function () {
         it('exist', function () {
             expect(SequelizeMocking.adaptSequelizeOptions).to.exist;
@@ -309,7 +319,7 @@ describe('SequelizeMocking - ', function () {
             });
 
 
-            let spyCopyModel = sinon.spy(SequelizeMocking, 'copyModel');
+            let spyCopyModel = sinonSandbox.spy(SequelizeMocking, 'copyModel');
             SequelizeMocking.copyCurrentModels(sequelizeInstance, mockedSequelizeInstance);
 
             spyCopyModel.restore();
@@ -349,12 +359,10 @@ describe('SequelizeMocking - ', function () {
                 'description': Sequelize.TEXT
             });
 
-            let stub = sinon.stub(sequelizeFixtures, 'loadFile', function () { return Promise.resolve(); });
-            let spy = sinon.spy(SequelizeMocking, 'mapModels');
+            let stub = sinonSandbox.stub(sequelizeFixtures, 'loadFile', function () { return Promise.resolve(); });
+            let spy = sinonSandbox.spy(SequelizeMocking, 'mapModels');
 
             SequelizeMocking.loadFixtureFile(sequelizeInstance, '/a/path/for/json/file');
-            stub.restore();
-            spy.restore();
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWith(sequelizeInstance)).to.be.true;
@@ -411,7 +419,7 @@ describe('SequelizeMocking - ', function () {
                 'description': Sequelize.TEXT
             });
 
-            let spy = sinon.spy(sequelizeFixtures, 'loadFile');
+            let spy = sinonSandbox.spy(sequelizeFixtures, 'loadFile');
             let filePath = path.resolve(path.join(__dirname, './my-model-database.json'));
 
             return sequelizeInstance
@@ -431,11 +439,6 @@ describe('SequelizeMocking - ', function () {
                             'log': Sequelize.Utils._.noop
                         }
                     ]);
-                    spy.restore();
-                })
-                .catch(function (err) {
-                    spy.restore();
-                    throw err;
                 });
         });
     });
@@ -690,10 +693,9 @@ describe('SequelizeMocking - ', function () {
             });
 
 
-            let spyCopyModel = sinon.spy(SequelizeMocking, 'modifyModelReference');
+            let spyCopyModel = sinonSandbox.spy(SequelizeMocking, 'modifyModelReference');
             SequelizeMocking.modifyModelReferences(sequelizeInstance, mockedSequelizeInstance);
 
-            spyCopyModel.restore();
             expect(spyCopyModel.called).to.be.true;
             expect(spyCopyModel.calledOnce).to.be.true;
             expect(spyCopyModel.calledWith(mockedSequelizeInstance, MyModel)).to.be.true;
@@ -712,7 +714,7 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            let spy = sinon.spy(SequelizeMocking, 'unhookNewModel');
+            let spy = sinonSandbox.spy(SequelizeMocking, 'unhookNewModel');
             SequelizeMocking.restore(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
@@ -734,7 +736,7 @@ describe('SequelizeMocking - ', function () {
 
             mockedSequelizeInstance.__originalSequelize = sequelizeInstance;
 
-            let spy = sinon.spy(SequelizeMocking, 'modifyModelReferences');
+            let spy = sinonSandbox.spy(SequelizeMocking, 'modifyModelReferences');
             SequelizeMocking.restore(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
@@ -765,7 +767,7 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            let spy = sinon.spy(mockedSequelizeInstance, 'drop');
+            let spy = sinonSandbox.spy(mockedSequelizeInstance, 'drop');
             return SequelizeMocking
                 .restore(mockedSequelizeInstance)
                 .then(function () {
@@ -782,7 +784,7 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            let spy = sinon.spy(mockedSequelizeInstance, 'drop');
+            let spy = sinonSandbox.spy(mockedSequelizeInstance, 'drop');
             return SequelizeMocking
                 .restore(mockedSequelizeInstance, { 'logging': false })
                 .then(function () {
@@ -831,10 +833,9 @@ describe('SequelizeMocking - ', function () {
                 }
             };
 
-            let spy = sinon.spy(sequelizeInstance.__originalSequelize, 'removeHook');
+            let spy = sinonSandbox.spy(sequelizeInstance.__originalSequelize, 'removeHook');
 
             SequelizeMocking.unhookNewModel(sequelizeInstance);
-            spy.restore();
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWith('afterDefine')).to.be.true;
