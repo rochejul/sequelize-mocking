@@ -25,7 +25,7 @@ describe('SequelizeMocking - ', function () {
         expect(SequelizeMocking).not.to.be.empty;
     });
 
-    describe('the method "adaptSequelizeOptions" should ', function () {
+    describe('and the method "adaptSequelizeOptions" should ', function () {
         it('exist', function () {
             expect(SequelizeMocking.adaptSequelizeOptions).to.exist;
         });
@@ -106,7 +106,7 @@ describe('SequelizeMocking - ', function () {
         });
     });
 
-    describe('the method "copyModel" should ', function () {
+    describe('and the method "copyModel" should ', function () {
         it('exist', function () {
             expect(SequelizeMocking.copyModel).to.exist;
         });
@@ -231,7 +231,7 @@ describe('SequelizeMocking - ', function () {
         });
     });
 
-    describe('the method "copyCurrentModels" should ', function (){
+    describe('and the method "copyCurrentModels" should ', function (){
         it('exist', function () {
             expect(SequelizeMocking.copyCurrentModels).to.exist;
         });
@@ -538,6 +538,258 @@ describe('SequelizeMocking - ', function () {
                 'myModel1': sequelizeInstance.modelManager.all[0],
                 'myModel2': sequelizeInstance.modelManager.all[1]
             });
+        });
+    });
+
+    describe('and the method "modifyModelReference" should ', function () {
+        it('exist', function () {
+           expect(SequelizeMocking.modifyModelReference).to.exist;
+        });
+
+        it('should override the sequelize property of the specified model with the specified sequelize instance', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let sequelizeInstance2 = new Sequelize('my-database2', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            expect(MyModel.sequelize).equals(sequelizeInstance);
+            SequelizeMocking.modifyModelReference(sequelizeInstance2, MyModel);
+            expect(MyModel.sequelize).equals(sequelizeInstance2);
+        });
+
+        it('should override the model manager based on the specified sequelize instance', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let sequelizeInstance2 = new Sequelize('my-database2', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            expect(MyModel.modelManager).equals(sequelizeInstance.modelManager);
+            SequelizeMocking.modifyModelReference(sequelizeInstance2, MyModel);
+            expect(MyModel.modelManager).equals(sequelizeInstance2.modelManager);
+        });
+    });
+
+    describe('and the method "modifyModelReferences" should ', function (){
+        it('exist', function () {
+            expect(SequelizeMocking.modifyModelReferences).to.exist;
+        });
+
+        it('override the models of the first sequelize instance', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            SequelizeMocking.modifyModelReferences(sequelizeInstance, mockedSequelizeInstance);
+            expect(MyModel.modelManager).equals(mockedSequelizeInstance.modelManager);
+            expect(MyModel.sequelize).equals(mockedSequelizeInstance);
+        });
+
+        it('use the "modifyModelReference" function', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let MyModel = sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+
+            let spyCopyModel = sinon.spy(SequelizeMocking, 'modifyModelReference');
+            SequelizeMocking.modifyModelReferences(sequelizeInstance, mockedSequelizeInstance);
+
+            spyCopyModel.restore();
+            expect(spyCopyModel.called).to.be.true;
+            expect(spyCopyModel.calledOnce).to.be.true;
+            expect(spyCopyModel.calledWith(mockedSequelizeInstance, MyModel)).to.be.true;
+        });
+    });
+
+    describe('and the method "restore" should ', function () {
+        it('exist', function () {
+           expect(SequelizeMocking.restore).to.exist;
+        });
+
+        it('should call "unhookNewModel" method', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let spy = sinon.spy(SequelizeMocking, 'unhookNewModel');
+            SequelizeMocking.restore(mockedSequelizeInstance);
+            expect(spy.called).to.be.true;
+            expect(spy.calledOnce).to.be.true;
+            expect(spy.calledWith(mockedSequelizeInstance)).to.be.true;
+        });
+
+        it('should call "modifyModelReferences" method if the sequelize instance is a mocked one', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            mockedSequelizeInstance.__originalSequelize = sequelizeInstance;
+
+            let spy = sinon.spy(SequelizeMocking, 'modifyModelReferences');
+            SequelizeMocking.restore(mockedSequelizeInstance);
+            expect(spy.called).to.be.true;
+            expect(spy.calledOnce).to.be.true;
+            expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
+        });
+
+        it('should remove "__originalSequelize" property', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            mockedSequelizeInstance.__originalSequelize = new Sequelize('my-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            SequelizeMocking.restore(mockedSequelizeInstance);
+            expect(mockedSequelizeInstance.__originalSequelize).not.to.exist;
+        });
+
+        it('should flush the mocked sequelize database', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let spy = sinon.spy(mockedSequelizeInstance, 'drop');
+            return SequelizeMocking
+                .restore(mockedSequelizeInstance)
+                .then(function () {
+                    expect(spy.called).to.be.true;
+                    expect(spy.calledOnce).to.be.true;
+                    expect(spy.calledWith({ 'logging': true })).to.be.true;
+                });
+        });
+
+        it('should use the "logging" option', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let spy = sinon.spy(mockedSequelizeInstance, 'drop');
+            return SequelizeMocking
+                .restore(mockedSequelizeInstance, { 'logging': false })
+                .then(function () {
+                    expect(spy.called).to.be.true;
+                    expect(spy.calledOnce).to.be.true;
+                    expect(spy.calledWith({ 'logging': false })).to.be.true;
+                });
         });
     });
 
