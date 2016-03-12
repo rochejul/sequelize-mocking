@@ -14,11 +14,14 @@ describe('SequelizeMocking - ', function () {
     const sinon = require('sinon');
 
     const path = require('path');
+    const EventEmitter = require('events').EventEmitter;
     const _ = require('lodash');
 
     const Sequelize = require('sequelize');
     const sequelizeFixtures = require('sequelize-fixtures');
     const SequelizeMocking = require('../lib/sequelize-mocking');
+
+    const defaultMaxListeners = EventEmitter.defaultMaxListeners;
 
     it('shall exist', function () {
         expect(SequelizeMocking).to.exist;
@@ -29,10 +32,12 @@ describe('SequelizeMocking - ', function () {
 
     beforeEach(function () {
         sinonSandbox = sinon.sandbox.create();
+        EventEmitter.defaultMaxListeners = 100; // Due to an error when we instanciate too many times fastly some dialects, like the MySql one
     });
 
     afterEach(function () {
         sinonSandbox.restore();
+        EventEmitter.defaultMaxListeners = defaultMaxListeners;
     });
 
     describe('and the method "adaptSequelizeOptions" should ', function () {
@@ -238,6 +243,113 @@ describe('SequelizeMocking - ', function () {
             expect(mockedSequelizeInstance.modelManager.all.length).equals(1);
             expect(mockedSequelizeInstance.modelManager).equals(DuplicatedMyModel.modelManager);
             expect(mockedSequelizeInstance.modelManager.all[0]).equals(DuplicatedMyModel);
+        });
+    });
+
+    describe('and the method "create" should ', function () {
+        it('exist', function () {
+            expect(SequelizeMocking.create).to.exist;
+        });
+
+        it('should use the copyCurrentModels, modifyModelReferences and hookNewModel methosds', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+
+            SequelizeMocking.create(sequelizeInstance);
+
+            expect(stubCopy.called).to.be.true;
+            expect(stubCopy.calledOnce).to.be.true;
+            expect(stubCopy.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
+
+            expect(stubModify.called).to.be.true;
+            expect(stubModify.calledOnce).to.be.true;
+            expect(stubModify.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
+
+            expect(stubHook.called).to.be.true;
+            expect(stubHook.calledOnce).to.be.true;
+            expect(stubHook.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
+        });
+
+        it('should return a "mocked" sequelize instance', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+
+            SequelizeMocking
+                .create(sequelizeInstance)
+                .then(function (mockedSequelize) {
+                    expect(mockedSequelize).to.be.instanceof(Sequelize);
+                    expect(mockedSequelize).not.equals(sequelizeInstance);
+                });
+        });
+
+        it('should associate onto the "mocked" sequelize instance the original one', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+
+            SequelizeMocking
+                .create(sequelizeInstance)
+                .then(function (mockedSequelize) {
+                    expect(mockedSequelize.__originalSequelize).to.be.defined;
+                    expect(mockedSequelize.__originalSequelize).to.be.instanceof(Sequelize);
+                    expect(mockedSequelize.__originalSequelize).equals(sequelizeInstance);
+                });
+        });
+
+        it('should pass through the options', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+
+            SequelizeMocking
+                .create(sequelizeInstance, { 'logging': false })
+                .then(function (mockedSequelize) {
+                    expect(stubHook.called).to.be.true;
+                    expect(stubHook.calledOnce).to.be.true;
+                    expect(stubHook.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize), { 'logging': false })).to.be.true;
+                });
         });
     });
 
@@ -918,9 +1030,9 @@ describe('SequelizeMocking - ', function () {
 
             let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
-                'dialect': 'sqlite',
-                'storage': ':memory:',
+                'dialect': 'mysql',
                 'define': {
+                    'engine': 'MYISAM',
                     'timestamps': false,
                     'paranoid': false
                 },
