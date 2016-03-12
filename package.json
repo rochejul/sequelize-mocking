@@ -9,10 +9,12 @@
     "npm-shrinkwrap.json"
   ],
   "scripts": {
+    "build-docker": "docker build -t jroche/sequelize-mocking .",
     "build-es5": "npm run delete lib-es5 && node ./node_modules/babel-cli/bin/babel.js lib --presets es2015 --out-dir lib-es5",
     "delete": "node node_modules/rimraf/bin.js",
     "checkstyle": "npm run delete ./target/eslint-reporter-checkstyle.xml && node node_modules/eslint/bin/eslint.js --config=.eslintrc --output-file ./target/eslint-reporter-checkstyle.xml --format checkstyle ./lib",
-    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test"
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+    "test-with-docker": "docker run jroche/sequelize-mocking"
   },
   "repository": {
     "type": "git",
