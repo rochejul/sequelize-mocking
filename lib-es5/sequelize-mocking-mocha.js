@@ -2,7 +2,7 @@
  * Using SequelizeMocking with mocha easily
  *
  * @module lib/sequelize-mocking-mocha
- * @exports Function
+ * @exports sequelizeMochingMocha
  * @version 0.1.0
  * @since 0.1.0
  * @author Julien Roche
@@ -17,6 +17,7 @@ var _ = Sequelize.Utils._;
 var SequelizeMocking = require('./sequelize-mocking');
 
 /**
+ * @name sequelizeMochingMocha
  * @param {Sequelize} originalSequelize
  * @param {string} [fixtureFilePath]
  * @param {SequelizeMockingOptions} [options]

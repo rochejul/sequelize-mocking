@@ -1,6 +1,6 @@
 {
   "name": "sequelize-mocking",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Sequelize extension to deal with mocking for tests",
   "main": ".index.js",
   "files": [
@@ -15,11 +15,9 @@
     "checkstyle": "npm run delete ./target/eslint-reporter-checkstyle.xml && node node_modules/eslint/bin/eslint.js --config=.eslintrc --output-file ./target/eslint-reporter-checkstyle.xml --format checkstyle ./lib",
     "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
     "test-with-docker": "docker run jroche/sequelize-mocking",
-
     "bump-major": "npm version major -m \"Upgrade to major version: %s\"",
     "bump-minor": "npm version minor -m \"Upgrade to minor version: %s\"",
     "bump-patch": "npm version patch -m \"Upgrade to version: %s\"",
-
     "preversion": "npm test",
     "version": "npm run build-es5 && git add -A lib-es5",
     "postversion": "git push && git push --tags"
