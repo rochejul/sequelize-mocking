@@ -15,12 +15,15 @@
     "checkstyle": "npm run delete ./target/eslint-reporter-checkstyle.xml && node node_modules/eslint/bin/eslint.js --config=.eslintrc --output-file ./target/eslint-reporter-checkstyle.xml --format checkstyle ./lib",
     "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
     "test-with-docker": "docker run jroche/sequelize-mocking",
-    "bump-major": "npm version major -m \"Upgrade to major version: %s\"",
-    "bump-minor": "npm version minor -m \"Upgrade to minor version: %s\"",
-    "bump-patch": "npm version patch -m \"Upgrade to version: %s\"",
-    "preversion": "npm test",
-    "version": "npm run build-es5 && git add -A lib-es5",
-    "postversion": "git push && git push --tags"
+    "npmversion": "node ./node_modules/npmversion/bin/npmversion",
+    "prenpmversion": "npm run build-es5 && git add -A lib-es5",
+    "bump-release": "npm test && npm run npmversion -- --unpreid --git-push",
+    "bump-major": "npm test && npm run npmversion -- --increment major --git-push",
+    "bump-minor": "npm test && npm run npmversion -- --increment minor --git-push",
+    "bump-patch": "npm test && npm run npmversion -- --increment major --git-push",
+    "bump-major-beta": "npm run npmversion -- --increment major --preid beta --nogit-tag --git-push",
+    "bump-minor-beta": "npm run npmversion -- --increment minor --preid beta --nogit-tag --git-push",
+    "bump-patch-beta": "npm run npmversion -- --increment major --preid beta --nogit-tag --git-push"
   },
   "repository": {
     "type": "git",
@@ -57,6 +60,7 @@
     "lodash": "4.5.1",
     "mocha": "2.4.5",
     "mysql": "2.10.2",
+    "npmversion": "1.2.0",
     "rimraf": "2.5.2",
     "sinon": "1.17.3"
   }
