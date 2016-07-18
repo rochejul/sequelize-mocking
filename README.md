@@ -78,7 +78,7 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
             chai.expect(UserService.find).to.exist;
         });
 
-        it('shall return an user if we can', function () {
+        it('shall return a user if we can', function () {
             let findByIdSpy = sandbox.spy(UserModel, 'findById');
 
             return UserService
