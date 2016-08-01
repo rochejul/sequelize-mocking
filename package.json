@@ -20,10 +20,10 @@
     "bump-release": "npm test && npm run npmversion -- --unpreid --git-push",
     "bump-major": "npm test && npm run npmversion -- --increment major --git-push",
     "bump-minor": "npm test && npm run npmversion -- --increment minor --git-push",
-    "bump-patch": "npm test && npm run npmversion -- --increment major --git-push",
+    "bump-patch": "npm test && npm run npmversion -- --increment patch --git-push",
     "bump-major-beta": "npm run npmversion -- --increment major --preid beta --nogit-tag --git-push",
     "bump-minor-beta": "npm run npmversion -- --increment minor --preid beta --nogit-tag --git-push",
-    "bump-patch-beta": "npm run npmversion -- --increment major --preid beta --nogit-tag --git-push"
+    "bump-patch-beta": "npm run npmversion -- --increment patch --preid beta --nogit-tag --git-push"
   },
   "repository": {
     "type": "git",
