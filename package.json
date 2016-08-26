@@ -60,7 +60,7 @@
     "lodash": "4.5.1",
     "mocha": "2.4.5",
     "mysql": "2.10.2",
-    "npmversion": "1.2.0",
+    "npmversion": "1.2.1",
     "rimraf": "2.5.2",
     "sinon": "1.17.3"
   }
