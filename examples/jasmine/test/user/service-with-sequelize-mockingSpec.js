@@ -37,7 +37,7 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
                 sequelizeInstance = mockedSequelizeInstance;
                 done();
             })
-            .catch(done);
+            .catch(done.fail);
     });
 
     afterEach(function (done) {
@@ -46,7 +46,7 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
             .then(function () {
                 done();
             })
-            .catch(done);
+            .catch(done.fail);
     });
 
     it('the service shall exist', function () {
@@ -58,8 +58,8 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
            chai.expect(UserService.findAll).to.exist;
         });
 
-        it('shall returns an array of user', function () {
-            return UserService
+        it('shall returns an array of user', function (done) {
+            UserService
                 .findAll()
                 .then(function (users) {
                     chai.expect(users).deep.equals([{
@@ -69,7 +69,9 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
                         'age': 25,
                         'description': null
                     }]);
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
     });
 
@@ -78,10 +80,10 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
             chai.expect(UserService.find).to.exist;
         });
 
-        it('shall return an user if we can', function () {
+        it('shall return an user if we can', function (done) {
             let findByIdSpy = sandbox.spy(UserModel, 'findById');
 
-            return UserService
+            UserService
                 .find(1)
                 .then(function (user) {
                     chai.expect(findByIdSpy.called).to.be.true;
@@ -95,15 +97,19 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
                         'age': 25,
                         'description': null
                     });
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
 
-        it('shall return null if not found', function () {
-            return UserService
+        it('shall return null if not found', function (done) {
+            UserService
                 .find(-1)
                 .then(function (user) {
                     chai.expect(user).to.be.null;
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
     });
 });

@@ -33,7 +33,7 @@ describe('User - UserService (classical way) - ', function () {
            chai.expect(UserService.findAll).to.exist;
         });
 
-        it('shall returns an array of user', function () {
+        it('shall returns an array of user', function (done) {
             let findAllStub = sandbox.stub(UserModel, 'findAll', function () {
                 return Promise.resolve([{
                     'id': 1,
@@ -44,7 +44,7 @@ describe('User - UserService (classical way) - ', function () {
                 }]);
             });
 
-            return UserService
+            UserService
                 .findAll()
                 .then(function (users) {
                     chai.expect(findAllStub.called).to.be.true;
@@ -58,7 +58,9 @@ describe('User - UserService (classical way) - ', function () {
                         'age': 25,
                         'description': null
                     }]);
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
     });
 
@@ -67,7 +69,7 @@ describe('User - UserService (classical way) - ', function () {
             chai.expect(UserService.find).to.exist;
         });
 
-        it('shall return an user', function () {
+        it('shall return an user', function (done) {
             let findByIdStub = sandbox.stub(UserModel, 'findById', function () {
                 return Promise.resolve({
                     'id': 1,
@@ -78,7 +80,7 @@ describe('User - UserService (classical way) - ', function () {
                 });
             });
 
-            return UserService
+            UserService
                 .find(1)
                 .then(function (users) {
                     chai.expect(findByIdStub.called).to.be.true;
@@ -92,19 +94,23 @@ describe('User - UserService (classical way) - ', function () {
                         'age': 25,
                         'description': null
                     });
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
 
-        it('shall return null if not found', function () {
+        it('shall return null if not found', function (done) {
             sandbox.stub(UserModel, 'findById', function () {
                 return Promise.resolve(null);
             });
 
-            return UserService
+            UserService
                 .find(-1)
                 .then(function (user) {
                     chai.expect(user).to.be.null;
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
     });
 });

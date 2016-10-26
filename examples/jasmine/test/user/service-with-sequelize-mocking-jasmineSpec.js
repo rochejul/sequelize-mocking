@@ -9,9 +9,9 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const path = require('path');
-const sequelizeMockingMocha = require('sequelize-mocking').sequelizeMockingMocha;
+const sequelizeMockingJasmine = require('sequelize-mocking').sequelizeMockingJasmine;
 
-describe('User - UserService (using sequelizeMockingMocha) - ', function () {
+describe('User - UserService (using sequelizeMockingJasmine) - ', function () {
     const Database = require('../../lib/database');
     const UserService = require('../../lib/user/service');
     const UserModel = require('../../lib/user/model');
@@ -28,7 +28,7 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
     });
 
     // Load fake data for the users
-    sequelizeMockingMocha(
+    sequelizeMockingJasmine(
         Database.getInstance(),
         path.resolve(path.join(__dirname, './fake-users-database.json')),
         { 'logging': false }
@@ -43,8 +43,8 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
            chai.expect(UserService.findAll).to.exist;
         });
 
-        it('shall returns an array of user', function () {
-            return UserService
+        it('shall returns an array of user', function (done) {
+            UserService
                 .findAll()
                 .then(function (users) {
                     chai.expect(users).deep.equals([{
@@ -54,7 +54,9 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
                         'age': 25,
                         'description': null
                     }]);
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
     });
 
@@ -63,10 +65,10 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
             chai.expect(UserService.find).to.exist;
         });
 
-        it('shall return an user if we can', function () {
+        it('shall return an user if we can', function (done) {
             let findByIdSpy = sandbox.spy(UserModel, 'findById');
 
-            return UserService
+            UserService
                 .find(1)
                 .then(function (user) {
                     chai.expect(findByIdSpy.called).to.be.true;
@@ -80,15 +82,19 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
                         'age': 25,
                         'description': null
                     });
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
 
-        it('shall return null if not found', function () {
-            return UserService
+        it('shall return null if not found', function (done) {
+            UserService
                 .find(-1)
                 .then(function (user) {
                     chai.expect(user).to.be.null;
-                });
+                    done();
+                })
+                .catch(done.fail);
         });
     });
 });

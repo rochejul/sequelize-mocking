@@ -4,7 +4,7 @@
   "description": "NodeJs projet to test Sequelize as ORM, but moreover, to see how to make some mocks and tests around Sequelize",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test"
+    "test": "node ./test/index.js"
   },
   "license": "ISC",
   "engines": {
@@ -16,9 +16,7 @@
     "sequelize": "3.19.2"
   },
   "devDependencies": {
-    "chai": "3.5.0",
-    "mocha": "2.4.5",
-    "sequelize-mocking": "../",
-    "sinon": "1.17.3"
+    "jasmine": "2.4.1",
+    "sequelize-mocking": "../../"
   }
 }
