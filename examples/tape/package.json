@@ -1,0 +1,24 @@
+{
+  "name": "node-sequelize-with-mocks",
+  "version": "1.0.0",
+  "description": "NodeJs projet to test Sequelize as ORM, but moreover, to see how to make some mocks and tests around Sequelize",
+  "main": "./lib/index.js",
+  "scripts": {
+    "tape": "node ./node_modules/tape/bin/tape",
+    "test": "npm run tape test/**/*Spec.js"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": ">=4.0.0",
+    "npm": ">=2.0.0"
+  },
+  "dependencies": {
+    "mysql": "2.10.2",
+    "sequelize": "3.19.2"
+  },
+  "devDependencies": {
+    "sequelize-mocking": "../../",
+    "sinon": "1.17.3",
+    "tape": "4.6.2"
+  }
+}

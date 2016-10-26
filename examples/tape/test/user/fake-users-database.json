@@ -1,0 +1,12 @@
+[
+  {
+    "model": "user",
+    "data": {
+      "id": 1,
+      "firstName": "John",
+      "lastName": "Doe",
+      "age": 25,
+      "description": null
+    }
+  }
+]
