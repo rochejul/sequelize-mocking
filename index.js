@@ -23,13 +23,17 @@ if (semver.lt(process.version, '4.0.0')) {
     // Use ES5 modules
     module.exports = {
         'SequelizeMocking': require('./lib-es5/sequelize-mocking'),
-        'sequelizeMockingMocha': require('./lib-es5/sequelize-mocking-mocha')
+        'sequelizeMockingMocha': require('./lib-es5/sequelize-mocking-mocha'),
+        'sequelizeMockingJasmine': require('./lib-es5/sequelize-mocking-jasmine'),
+        'sequelizeMockingTape': require('./lib-es5/sequelize-mocking-tape')
     };
 
 } else {
     // Use ES6 modules
     module.exports = {
         'SequelizeMocking': require('./lib/sequelize-mocking'),
-        'sequelizeMockingMocha': require('./lib/sequelize-mocking-mocha')
+        'sequelizeMockingMocha': require('./lib/sequelize-mocking-mocha'),
+        'sequelizeMockingJasmine': require('./lib/sequelize-mocking-jasmine'),
+        'sequelizeMockingTape': require('./lib/sequelize-mocking-tape')
     };
 }
