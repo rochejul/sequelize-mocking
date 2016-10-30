@@ -103,6 +103,7 @@ var SequelizeMocking = function () {
             mockedSequelize.__originalSequelize = originalSequelize;
 
             SequelizeMocking.copyCurrentModels(originalSequelize, mockedSequelize);
+            SequelizeMocking.modifyConnection(originalSequelize, mockedSequelize);
             SequelizeMocking.modifyModelReferences(originalSequelize, mockedSequelize);
             SequelizeMocking.hookNewModel(originalSequelize, mockedSequelize, options);
 
@@ -190,6 +191,24 @@ var SequelizeMocking = function () {
         }
 
         /**
+         * @param {Sequelize} originalSequelize
+         * @param {Sequelize} newSequelizeToUse
+         * @returns {Sequelize} The new Sequelize object
+         */
+
+    }, {
+        key: 'modifyConnection',
+        value: function modifyConnection(originalSequelize, newSequelizeToUse) {
+            originalSequelize.__connectionManager = originalSequelize.connectionManager;
+            originalSequelize.connectionManager = newSequelizeToUse.connectionManager;
+
+            originalSequelize.__dialect = originalSequelize.dialect;
+            originalSequelize.dialect = newSequelizeToUse.dialect;
+
+            return newSequelizeToUse;
+        }
+
+        /**
          * Goal: the instanciate model shall use another instance of @{Sequelize} than the one used to create the model
          *
          * @param {Sequelize} newSequelizeToUse
@@ -238,7 +257,13 @@ var SequelizeMocking = function () {
                 SequelizeMocking.modifyModelReferences(mockedSequelize, mockedSequelize.__originalSequelize);
             }
 
+            if (mockedSequelize.__dialect && mockedSequelize.__connectionManager) {
+                SequelizeMocking.modifyConnection(mockedSequelize, mockedSequelize.__originalSequelize);
+            }
+
             delete mockedSequelize.__originalSequelize;
+            delete mockedSequelize.__dialect;
+            delete mockedSequelize.__connectionManager;
 
             logging && console.log('SequelizeMocking - restore the context');
             return mockedSequelize.drop({ 'logging': logging }).then(function () {

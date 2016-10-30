@@ -86,57 +86,57 @@ describe('User - UserService (using sequelize-fixtures) - ', function () {
        chai.expect(UserService).to.exist;
     });
 
-    //describe('and the method findAll shall ', function () {
-    //    it('exist', function () {
-    //        chai.expect(UserService.findAll).to.exist;
-    //    });
-    //
-    //    it('shall returns an array of user', function () {
-    //        return UserService
-    //            .findAll()
-    //            .then(function (users) {
-    //                chai.expect(users).deep.equals([{
-    //                    'id': 1,
-    //                    'firstName': 'John',
-    //                    'lastName': 'Doe',
-    //                    'age': 25,
-    //                    'description': null
-    //                }]);
-    //            });
-    //    });
-    //});
-    //
-    //describe('and the method find shall ', function () {
-    //    it('exist', function () {
-    //        chai.expect(UserService.find).to.exist;
-    //    });
-    //
-    //    it('shall return an user if we can', function () {
-    //        let findByIdSpy = sandbox.spy(UserModel, 'findById');
-    //
-    //        return UserService
-    //            .find(1)
-    //            .then(function (user) {
-    //                chai.expect(findByIdSpy.called).to.be.true;
-    //                chai.expect(findByIdSpy.calledOnce).to.be.true;
-    //                chai.expect(findByIdSpy.calledWith(1)).to.be.true;
-    //
-    //                chai.expect(user).deep.equals({
-    //                    'id': 1,
-    //                    'firstName': 'John',
-    //                    'lastName': 'Doe',
-    //                    'age': 25,
-    //                    'description': null
-    //                });
-    //            });
-    //    });
-    //
-    //    it('shall return null if not found', function () {
-    //        return UserService
-    //            .find(-1)
-    //            .then(function (user) {
-    //                chai.expect(user).to.be.null;
-    //            });
-    //    });
-    //});
+    describe('and the method findAll shall ', function () {
+        it('exist', function () {
+            chai.expect(UserService.findAll).to.exist;
+        });
+
+        it('shall returns an array of user', function () {
+            return UserService
+                .findAll()
+                .then(function (users) {
+                    chai.expect(users).deep.equals([{
+                        'id': 1,
+                        'firstName': 'John',
+                        'lastName': 'Doe',
+                        'age': 25,
+                        'description': null
+                    }]);
+                });
+        });
+    });
+
+    describe('and the method find shall ', function () {
+        it('exist', function () {
+            chai.expect(UserService.find).to.exist;
+        });
+
+        it('shall return an user if we can', function () {
+            let findByIdSpy = sandbox.spy(UserModel, 'findById');
+
+            return UserService
+                .find(1)
+                .then(function (result) {
+                    chai.expect(findByIdSpy.called).to.be.true;
+                    chai.expect(findByIdSpy.calledOnce).to.be.true;
+                    chai.expect(findByIdSpy.calledWith(1)).to.be.true;
+
+                    chai.expect(result.dataValues).deep.equals({
+                        'id': 1,
+                        'firstName': 'John',
+                        'lastName': 'Doe',
+                        'age': 25,
+                        'description': null
+                    });
+                });
+        });
+
+        it('shall return null if not found', function () {
+            return UserService
+                .find(-1)
+                .then(function (user) {
+                    chai.expect(user).to.be.null;
+                });
+        });
+    });
 });

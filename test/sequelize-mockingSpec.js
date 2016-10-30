@@ -251,7 +251,7 @@ describe('SequelizeMocking - ', function () {
             expect(SequelizeMocking.create).to.exist;
         });
 
-        it('should use the copyCurrentModels, modifyModelReferences and hookNewModel methosds', function () {
+        it('should use the copyCurrentModels, modifyModelReferences, modifyConnection and hookNewModel methods', function () {
             let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
                 'dialect': 'sqlite',
@@ -263,7 +263,8 @@ describe('SequelizeMocking - ', function () {
             });
 
             let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
+            let stubModifyModelReferences = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
+            let stubModifyConnection = sinonSandbox.stub(SequelizeMocking, 'modifyConnection', _.noop);
             let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
 
             SequelizeMocking.create(sequelizeInstance);
@@ -272,9 +273,13 @@ describe('SequelizeMocking - ', function () {
             expect(stubCopy.calledOnce).to.be.true;
             expect(stubCopy.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
 
-            expect(stubModify.called).to.be.true;
-            expect(stubModify.calledOnce).to.be.true;
-            expect(stubModify.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
+            expect(stubModifyModelReferences.called).to.be.true;
+            expect(stubModifyModelReferences.calledOnce).to.be.true;
+            expect(stubModifyModelReferences.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
+
+            expect(stubModifyConnection.called).to.be.true;
+            expect(stubModifyConnection.calledOnce).to.be.true;
+            expect(stubModifyConnection.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize))).to.be.true;
 
             expect(stubHook.called).to.be.true;
             expect(stubHook.calledOnce).to.be.true;
@@ -325,6 +330,9 @@ describe('SequelizeMocking - ', function () {
                     expect(mockedSequelize.__originalSequelize).to.be.defined;
                     expect(mockedSequelize.__originalSequelize).to.be.instanceof(Sequelize);
                     expect(mockedSequelize.__originalSequelize).equals(sequelizeInstance);
+
+                    expect(mockedSequelize.__dialect).to.be.defined;
+                    expect(mockedSequelize.__connectionManager).to.be.defined;
                 });
         });
 
@@ -940,6 +948,52 @@ describe('SequelizeMocking - ', function () {
         });
     });
 
+    describe('and the method "modifyConnection" should ', function () {
+        it('exist', function () {
+            expect(SequelizeMocking.modifyConnection).to.exist;
+        });
+
+        it('should override the dialect and the connectionManafer', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'mysql',
+                'define': {
+                    'engine': 'MYISAM',
+                    'timestamps': false,
+                    'paranoid': false
+                },
+                'pool': {
+                    'max': 5,
+                    'min': 0,
+                    'idle': 10000
+                }
+            });
+
+            let usedDialect = sequelizeInstance.dialect;
+            let usedConnectionManager = sequelizeInstance.connectionManager;
+
+            let sequelizeInstance2 = new Sequelize('my-database2', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            SequelizeMocking.modifyConnection(sequelizeInstance, sequelizeInstance2);
+            expect(sequelizeInstance.__dialect).to.exist;
+            expect(sequelizeInstance.__dialect).equals(usedDialect);
+
+            expect(sequelizeInstance.__connectionManager).to.exist;
+            expect(sequelizeInstance.__connectionManager).equals(usedConnectionManager);
+
+            expect(sequelizeInstance.dialect === sequelizeInstance2.dialect).to.be.true;
+            expect(sequelizeInstance.connectionManager === sequelizeInstance2.connectionManager).to.be.true;
+        });
+    });
+
     describe('and the method "modifyModelReference" should ', function () {
         it('exist', function () {
            expect(SequelizeMocking.modifyModelReference).to.exist;
@@ -1139,6 +1193,30 @@ describe('SequelizeMocking - ', function () {
             expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
         });
 
+        it('should call "modifyConnection" method if the sequelize instance is a mocked one', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            let sequelizeInstance = new Sequelize('my-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            mockedSequelizeInstance.__originalSequelize = sequelizeInstance;
+            mockedSequelizeInstance.__dialect = sequelizeInstance.dialect;
+            mockedSequelizeInstance.__connectionManager = sequelizeInstance.connectionManager;
+
+            let spy = sinonSandbox.spy(SequelizeMocking, 'modifyConnection');
+            SequelizeMocking.restore(mockedSequelizeInstance);
+            expect(spy.called).to.be.true;
+            expect(spy.calledOnce).to.be.true;
+            expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
+        });
+
         it('should remove "__originalSequelize" property', function () {
             let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
                 'host': 'localhost',
@@ -1154,6 +1232,24 @@ describe('SequelizeMocking - ', function () {
 
             SequelizeMocking.restore(mockedSequelizeInstance);
             expect(mockedSequelizeInstance.__originalSequelize).not.to.exist;
+        });
+
+        it('should remove "__dialect" and "__connectionManager" properties', function () {
+            let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            mockedSequelizeInstance.__originalSequelize = new Sequelize('my-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            SequelizeMocking.restore(mockedSequelizeInstance);
+            expect(mockedSequelizeInstance.__dialect).not.to.exist;
+            expect(mockedSequelizeInstance.__connectionManager).not.to.exist;
         });
 
         it('should flush the mocked sequelize database', function () {
