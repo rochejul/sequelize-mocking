@@ -1,6 +1,6 @@
 {
   "name": "sequelize-mocking",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "dependencies": {
     "semver": {
       "version": "5.1.0",

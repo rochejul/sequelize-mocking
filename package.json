@@ -1,6 +1,6 @@
 {
   "name": "sequelize-mocking",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A Sequelize extension to deal with mocking for tests",
   "main": ".index.js",
   "files": [
