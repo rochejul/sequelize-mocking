@@ -45,7 +45,6 @@
   "homepage": "https://github.com/rochejul/sequelize-mocking#readme",
   "dependencies": {
     "semver": "5.1.0",
-    "sequelize": "3.19.3",
     "sequelize-fixtures": "0.4.8",
     "sqlite3": "3.1.4"
   },
@@ -63,6 +62,7 @@
     "mysql": "2.10.2",
     "npmversion": "1.2.1",
     "rimraf": "2.5.2",
+    "sequelize": "3.19.3",
     "sinon": "1.17.3"
   }
 }
