@@ -46,7 +46,8 @@
   "dependencies": {
     "semver": "5.1.0",
     "sequelize-fixtures": "0.4.8",
-    "sqlite3": "3.1.4"
+    "sqlite3": "3.1.4",
+    "tape": "^4.7.0"
   },
   "engines": {
     "node": ">=4.0.0",
