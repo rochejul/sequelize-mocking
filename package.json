@@ -6,8 +6,7 @@
   "files": [
     "index.js",
     "lib",
-    "lib-es5",
-    "npm-shrinkwrap.json"
+    "lib-es5"
   ],
   "scripts": {
     "build-docker": "docker build -t jroche/sequelize-mocking .",
