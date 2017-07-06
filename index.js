@@ -12,6 +12,7 @@
 
 // Nota Bene: do not use es6 syntax here to deal with a fallbacl
 var semver = require('semver');
+var basePath;
 
 /**
  * @class SequelizeMockingLib
@@ -21,19 +22,33 @@ var semver = require('semver');
 
 if (semver.lt(process.version, '4.0.0')) {
     // Use ES5 modules
-    module.exports = {
-        'SequelizeMocking': require('./lib-es5/sequelize-mocking'),
-        'sequelizeMockingMocha': require('./lib-es5/sequelize-mocking-mocha'),
-        'sequelizeMockingJasmine': require('./lib-es5/sequelize-mocking-jasmine'),
-        'sequelizeMockingTape': require('./lib-es5/sequelize-mocking-tape')
-    };
+    basePath = './lib-es5';
 
 } else {
     // Use ES6 modules
-    module.exports = {
-        'SequelizeMocking': require('./lib/sequelize-mocking'),
-        'sequelizeMockingMocha': require('./lib/sequelize-mocking-mocha'),
-        'sequelizeMockingJasmine': require('./lib/sequelize-mocking-jasmine'),
-        'sequelizeMockingTape': require('./lib/sequelize-mocking-tape')
-    };
+    basePath = './lib';
 }
+
+Object.defineProperty(module.exports, 'SequelizeMocking', {
+    'get': function() {
+        return require(basePath + '/sequelize-mocking');
+    }
+});
+
+Object.defineProperty(module.exports, 'sequelizeMockingMocha', {
+    'get': function() {
+        return require(basePath + '/sequelize-mocking-mocha');
+    }
+});
+
+Object.defineProperty(module.exports, 'sequelizeMockingJasmine', {
+    'get': function() {
+        return require(basePath + '/sequelize-mocking-jasmine');
+    }
+});
+
+Object.defineProperty(module.exports, 'sequelizeMockingTape', {
+    'get': function() {
+        return require(basePath + '/sequelize-mocking-tape');
+    }
+});
