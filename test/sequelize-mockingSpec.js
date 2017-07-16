@@ -25,7 +25,7 @@ describe('SequelizeMocking - ', function () {
 
     it('shall exist', function () {
         expect(SequelizeMocking).to.exist;
-        expect(SequelizeMocking).not.to.be.empty;
+        expect(_.isPlainObject(SequelizeMocking)).to.be.false;
     });
 
     let sinonSandbox;
@@ -76,7 +76,7 @@ describe('SequelizeMocking - ', function () {
                     'dialectModulePath': null,
                     'hooks': {},
                     'host': 'localhost',
-                    'isolationLevel': 'REPEATABLE READ',
+                    'isolationLevel': null,
                     'logging': console.log,
                     'native': false,
                     'omitNull': false,
@@ -95,6 +95,7 @@ describe('SequelizeMocking - ', function () {
                         ],
                         'max': 5
                     },
+                    'ssl': undefined,
                     'storage': ':memory:',
                     'sync': {},
                     'timezone': '+00:00',
@@ -237,12 +238,7 @@ describe('SequelizeMocking - ', function () {
             expect(DuplicatedMyModel.options.sequelize).equals(mockedSequelizeInstance);
 
             expect(sequelizeInstance.modelManager.all.length).equals(1);
-            expect(sequelizeInstance.modelManager).equals(MyModel.modelManager);
-            expect(sequelizeInstance.modelManager.all[0]).equals(MyModel);
-
             expect(mockedSequelizeInstance.modelManager.all.length).equals(1);
-            expect(mockedSequelizeInstance.modelManager).equals(DuplicatedMyModel.modelManager);
-            expect(mockedSequelizeInstance.modelManager.all[0]).equals(DuplicatedMyModel);
         });
     });
 
@@ -327,12 +323,12 @@ describe('SequelizeMocking - ', function () {
             SequelizeMocking
                 .create(sequelizeInstance)
                 .then(function (mockedSequelize) {
-                    expect(mockedSequelize.__originalSequelize).to.be.defined;
+                    expect(mockedSequelize.__originalSequelize).not.to.be.undefined;
                     expect(mockedSequelize.__originalSequelize).to.be.instanceof(Sequelize);
                     expect(mockedSequelize.__originalSequelize).equals(sequelizeInstance);
 
-                    expect(mockedSequelize.__dialect).to.be.defined;
-                    expect(mockedSequelize.__connectionManager).to.be.defined;
+                    expect(mockedSequelize.__dialect).not.to.be.undefined;
+                    expect(mockedSequelize.__connectionManager).not.to.be.undefined;
                 });
         });
 
@@ -869,7 +865,7 @@ describe('SequelizeMocking - ', function () {
             });
 
             let mapModels = SequelizeMocking.mapModels(sequelizeInstance);
-            expect(mapModels).to.be.defined;
+            expect(mapModels).not.to.be.undefined;
             expect(mapModels).to.be.empty;
         });
 
@@ -899,7 +895,7 @@ describe('SequelizeMocking - ', function () {
             });
 
             let mapModels = SequelizeMocking.mapModels(sequelizeInstance);
-            expect(mapModels).to.be.defined;
+            expect(mapModels).not.to.be.undefined;
             expect(mapModels).deep.equals({
                 'myModel': sequelizeInstance.modelManager.all[0]
             });
@@ -940,7 +936,7 @@ describe('SequelizeMocking - ', function () {
             });
 
             let mapModels = SequelizeMocking.mapModels(sequelizeInstance);
-            expect(mapModels).to.be.defined;
+            expect(mapModels).not.to.be.undefined;
             expect(mapModels).deep.equals({
                 'myModel1': sequelizeInstance.modelManager.all[0],
                 'myModel2': sequelizeInstance.modelManager.all[1]
@@ -1064,9 +1060,9 @@ describe('SequelizeMocking - ', function () {
                 'description': Sequelize.TEXT
             });
 
-            expect(MyModel.modelManager).equals(sequelizeInstance.modelManager);
+            expect(MyModel.sequelize).equals(sequelizeInstance);
             SequelizeMocking.modifyModelReference(sequelizeInstance2, MyModel);
-            expect(MyModel.modelManager).equals(sequelizeInstance2.modelManager);
+            expect(MyModel.sequelize).equals(sequelizeInstance2);
         });
     });
 
@@ -1107,7 +1103,6 @@ describe('SequelizeMocking - ', function () {
             });
 
             SequelizeMocking.modifyModelReferences(sequelizeInstance, mockedSequelizeInstance);
-            expect(MyModel.modelManager).equals(mockedSequelizeInstance.modelManager);
             expect(MyModel.sequelize).equals(mockedSequelizeInstance);
         });
 

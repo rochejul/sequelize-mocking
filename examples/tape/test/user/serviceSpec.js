@@ -50,7 +50,7 @@ function afterEach(test, handler) {
 
             listener(assert);
         });
-    }
+    };
 }
 
 // Basic configuration: create a sinon sandbox for testing

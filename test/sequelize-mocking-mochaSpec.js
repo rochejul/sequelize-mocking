@@ -21,7 +21,7 @@ describe('sequelizeMochingMocha - ', function () {
 
     it('shall exist', function () {
         expect(sequelizeMochingMocha).to.exist;
-        expect(sequelizeMochingMocha).not.to.be.empty;
+        expect(_.isPlainObject(sequelizeMochingMocha)).to.be.false;
     });
 
     it('should be a function', function () {

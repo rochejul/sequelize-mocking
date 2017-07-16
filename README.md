@@ -4,7 +4,7 @@
 [![devDependency Status](https://david-dm.org/rochejul/sequelize-mocking/dev-status.svg)](https://david-dm.org/rochejul/sequelize-mocking#info=devDependencies)
 
 
-Sequelize extension to deal with data-mocking for testing (was tested with Sequelize 3.19.3. And you have to declare in your package.json the expected sequelize version)
+Sequelize extension to deal with data-mocking for testing (was tested with Sequelize 3.19.3 before 1.0.0 and with Sequelize 4.3.1 since 1.0.0. And you have to declare in your package.json the expected sequelize version)
 
 It will use the sqlite database for mocked database, will recreate it for database.
 

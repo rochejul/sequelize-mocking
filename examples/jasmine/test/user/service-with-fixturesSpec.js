@@ -53,7 +53,6 @@ describe('User - UserService (using sequelize-fixtures) - ', function () {
         });
 
         realSequelizeInstance.modelManager.all.forEach(function (model) {
-            model.init(sequelizeInstance.modelManager);
             sequelizeInstance.modelManager.addModel(model);
             model.sequelize = sequelizeInstance;
         });
@@ -77,7 +76,6 @@ describe('User - UserService (using sequelize-fixtures) - ', function () {
 
     afterEach(function () {
         realSequelizeInstance.modelManager.all.forEach(function (model) {
-            model.init(realSequelizeInstance.modelManager);
             model.sequelize = realSequelizeInstance;
         });
     });
