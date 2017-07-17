@@ -258,10 +258,10 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
-            let stubModifyModelReferences = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
-            let stubModifyConnection = sinonSandbox.stub(SequelizeMocking, 'modifyConnection', _.noop);
-            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            let stubModifyModelReferences = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            let stubModifyConnection = sinonSandbox.stub(SequelizeMocking, 'modifyConnection').callsFake(_.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             SequelizeMocking.create(sequelizeInstance);
 
@@ -293,11 +293,11 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
-            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
-            SequelizeMocking
+            return SequelizeMocking
                 .create(sequelizeInstance)
                 .then(function (mockedSequelize) {
                     expect(mockedSequelize).to.be.instanceof(Sequelize);
@@ -316,19 +316,16 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
-            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
-            SequelizeMocking
+            return SequelizeMocking
                 .create(sequelizeInstance)
                 .then(function (mockedSequelize) {
                     expect(mockedSequelize.__originalSequelize).not.to.be.undefined;
                     expect(mockedSequelize.__originalSequelize).to.be.instanceof(Sequelize);
                     expect(mockedSequelize.__originalSequelize).equals(sequelizeInstance);
-
-                    expect(mockedSequelize.__dialect).not.to.be.undefined;
-                    expect(mockedSequelize.__connectionManager).not.to.be.undefined;
                 });
         });
 
@@ -343,11 +340,11 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels', _.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences', _.noop);
-            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel', _.noop);
+            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
-            SequelizeMocking
+            return SequelizeMocking
                 .create(sequelizeInstance, { 'logging': false })
                 .then(function (mockedSequelize) {
                     expect(stubHook.called).to.be.true;
