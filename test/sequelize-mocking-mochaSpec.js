@@ -136,7 +136,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'restore', () => Promise.resolve());
+            sinonSandbox.stub(SequelizeMocking, 'restore').callsFake(() => Promise.resolve());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
@@ -167,7 +167,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'restore', () => Promise.reject());
+            sinonSandbox.stub(SequelizeMocking, 'restore').callsFake(() => Promise.reject());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
@@ -214,7 +214,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'create', () => Promise.resolve());
+            sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
@@ -245,7 +245,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'createAndLoadFixtureFile', () => Promise.resolve());
+            sinonSandbox.stub(SequelizeMocking, 'createAndLoadFixtureFile').callsFake(() => Promise.resolve());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
@@ -276,7 +276,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'createAndLoadFixtureFile', () => Promise.reject());
+            sinonSandbox.stub(SequelizeMocking, 'createAndLoadFixtureFile').callsFake(() => Promise.reject());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {

@@ -360,7 +360,7 @@ describe('SequelizeMocking - ', function () {
         });
 
         it('call the "create" function', function () {
-            let stub = sinonSandbox.stub(SequelizeMocking, 'create', () => Promise.reject());
+            let stub = sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.reject());
 
             let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
@@ -399,8 +399,8 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stub = sinonSandbox.stub(SequelizeMocking, 'create', () => Promise.resolve(mockedSequelizeInstance));
-            let stub2 = sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile', () => Promise.resolve());
+            let stub = sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() =>  Promise.resolve(mockedSequelizeInstance));
+            let stub2 = sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile').callsFake(() => Promise.resolve());
 
             return SequelizeMocking
                 .createAndLoadFixtureFile(sequelizeInstance, 'a/path', { 'logging': false })
@@ -432,8 +432,8 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stub = sinonSandbox.stub(SequelizeMocking, 'create', () => Promise.resolve(mockedSequelizeInstance));
-            let stub2 = sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile', () => Promise.resolve());
+            let stub = sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve(mockedSequelizeInstance));
+            let stub2 = sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile').callsFake(() => Promise.resolve());
 
             return SequelizeMocking
                 .createAndLoadFixtureFile(sequelizeInstance, 'a/path', { 'logging': false })
@@ -664,7 +664,7 @@ describe('SequelizeMocking - ', function () {
             let fakeObject = {
                 'sync': () => Promise.resolve()
             };
-            let stub = sinonSandbox.stub(SequelizeMocking, 'modifyModelReference', () => fakeObject);
+            let stub = sinonSandbox.stub(SequelizeMocking, 'modifyModelReference').callsFake(() => fakeObject);
             let spy = sinonSandbox.stub(console, 'log');
 
             SequelizeMocking.hookNewModel(sequelizeInstance, mockedSequelizeInstance, { 'logging': false });
@@ -679,50 +679,6 @@ describe('SequelizeMocking - ', function () {
             });
 
             expect(spy.called).to.be.false;
-        });
-
-        it('should call create the database table', function (done) {
-            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
-                'host': 'localhost',
-                'dialect': 'sqlite',
-                'storage': ':memory:',
-                'define': {
-                    'timestamps': false,
-                    'paranoid': false
-                }
-            });
-
-            let mockedSequelizeInstance = new Sequelize('mocked-database', 'mysqlUserName', 'mysqlUserPassword', {
-                'host': 'localhost',
-                'dialect': 'sqlite',
-                'storage': ':memory:',
-                'define': {
-                    'timestamps': false,
-                    'paranoid': false
-                },
-                'hooks': {
-                    'afterSync': function (synchedModel) {
-                        try {
-                            expect(synchedModel.name.singular).equals('myModel');
-                            done();
-
-                        } catch (err) {
-                            done(err);
-                        }
-                    }
-                }
-            });
-
-            SequelizeMocking.hookNewModel(sequelizeInstance, mockedSequelizeInstance);
-
-            sequelizeInstance.define('myModel', {
-                'id': {
-                    'type': Sequelize.INTEGER,
-                    'autoIncrement': true,
-                    'primaryKey': true
-                },
-                'description': Sequelize.TEXT
-            });
         });
     });
 
@@ -756,7 +712,7 @@ describe('SequelizeMocking - ', function () {
                 'description': Sequelize.TEXT
             });
 
-            let stub = sinonSandbox.stub(sequelizeFixtures, 'loadFile', function () { return Promise.resolve(); });
+            let stub = sinonSandbox.stub(sequelizeFixtures, 'loadFile').callsFake(() => Promise.resolve());
             let spy = sinonSandbox.spy(SequelizeMocking, 'mapModels');
 
             SequelizeMocking.loadFixtureFile(sequelizeInstance, '/a/path/for/json/file');
