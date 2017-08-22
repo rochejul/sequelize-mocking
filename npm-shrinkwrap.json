@@ -1,6 +1,6 @@
 {
   "name": "sequelize-mocking",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "sequelize-fixtures": {
       "version": "0.6.0",
