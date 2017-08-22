@@ -13,6 +13,7 @@ describe('sequelizeMochingMocha - ', function () {
     const expect = require('chai').expect;
     const sinon = require('sinon');
 
+    const path = require('path');
     const _ = require('lodash');
     const Sequelize = require('sequelize');
 
@@ -297,6 +298,22 @@ describe('sequelizeMochingMocha - ', function () {
                     }
                 }, 150);
             });
+        });
+    });
+
+    describe('should deal with multiple models', function () {
+        const sequelize = new Sequelize('mysql://user:xyzzy@localhost:3306/');
+        const User = sequelize.define('User', { });
+        const OtherObject = sequelize.define('OtherObject', { });
+
+        sequelizeMochingMocha(
+            sequelize,
+            path.resolve(path.join(__dirname, './user-database.json')),
+            { 'logging': false }
+        );
+
+        it('', function () {
+            expect(User).to.exist;
         });
     });
 });
