@@ -721,7 +721,7 @@ describe('SequelizeMocking - ', function () {
             expect(spy.calledWith(sequelizeInstance)).to.be.true;
         });
 
-        it('should load the fixture models file and return into the Promise the sequelize instance', function () {
+        it('load the fixture models file and return into the Promise the sequelize instance', function () {
             let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
                 'dialect': 'sqlite',
@@ -790,6 +790,60 @@ describe('SequelizeMocking - ', function () {
                         {
                             'encoding': 'utf8',
                             'log': Sequelize.Utils._.noop
+                        }
+                    ]);
+                });
+        });
+
+        it('should allow transform the data if specified', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            let spy = sinonSandbox.spy(sequelizeFixtures, 'loadFile');
+            let filePath = path.resolve(path.join(__dirname, './my-model-database.json'));
+
+            function transformFixtureDataFn(data) {
+                // Fixtures with negative numbers allow creating data objects
+                // relative to the time of the import.
+                if(data.createdAt
+                    && data.createdAt < 0) {
+                    data.createdAt = new Date((new Date()).getTime() + parseFloat(data.createdAt) * 1000 * 60);
+                }
+                return data;
+            }
+
+            return sequelizeInstance
+                .sync()
+                .then(function () {
+                    return SequelizeMocking
+                        .loadFixtureFile(sequelizeInstance, filePath, { 'logging': false, 'transformFixtureDataFn': transformFixtureDataFn });
+                })
+                .then(function () {
+                    expect(spy.firstCall.args).deep.equals([
+                        filePath,
+                        {
+                            'myModel': sequelizeInstance.modelManager.all[0]
+                        },
+                        {
+                            'encoding': 'utf8',
+                            'log': Sequelize.Utils._.noop,
+                            'transformFixtureDataFn': transformFixtureDataFn
                         }
                     ]);
                 });
