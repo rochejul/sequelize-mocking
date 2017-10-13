@@ -789,7 +789,7 @@ describe('SequelizeMocking - ', function () {
                         },
                         {
                             'encoding': 'utf8',
-                            'log': _.noop
+                            'log': SequelizeMocking.noop
                         }
                     ]);
                 });
@@ -842,7 +842,7 @@ describe('SequelizeMocking - ', function () {
                         },
                         {
                             'encoding': 'utf8',
-                            'log': _.noop,
+                            'log': SequelizeMocking.noop,
                             'transformFixtureDataFn': transformFixtureDataFn
                         }
                     ]);
