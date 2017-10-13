@@ -2,6 +2,16 @@
   "name": "sequelize-mocking",
   "version": "1.1.0",
   "dependencies": {
+    "lodash": {
+      "version": "4.17.4",
+      "from": "lodash@4.17.4",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz"
+    },
+    "semver": {
+      "version": "5.1.0",
+      "from": "https://registry.npmjs.org/semver/-/semver-5.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.0.tgz"
+    },
     "sequelize-fixtures": {
       "version": "0.6.0",
       "from": "sequelize-fixtures@0.6.0",

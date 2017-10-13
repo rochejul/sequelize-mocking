@@ -80,6 +80,7 @@ describe('SequelizeMocking - ', function () {
                     'logging': console.log,
                     'native': false,
                     'omitNull': false,
+                    'operatorsAliases': true,
                     'pool': {
                         'idle': 10000,
                         'max': 5,
@@ -789,7 +790,7 @@ describe('SequelizeMocking - ', function () {
                         },
                         {
                             'encoding': 'utf8',
-                            'log': Sequelize.Utils._.noop
+                            'log': _.noop
                         }
                     ]);
                 });
@@ -842,7 +843,7 @@ describe('SequelizeMocking - ', function () {
                         },
                         {
                             'encoding': 'utf8',
-                            'log': Sequelize.Utils._.noop,
+                            'log': _.noop,
                             'transformFixtureDataFn': transformFixtureDataFn
                         }
                     ]);
