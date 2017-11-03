@@ -562,7 +562,7 @@ describe('SequelizeMocking - ', function () {
             SequelizeMocking.hookNewModel(sequelizeInstance, mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
-            expect(spy.calledWith('afterDefine', sinon.match.func)).to.be.true;
+            expect(spy.calledWith('afterDefine', 'sequelizeMockAfterDefine', sinon.match.func)).to.be.true;
         });
 
         it('should call "copyModel" when a new model is added', function () {
