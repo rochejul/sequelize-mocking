@@ -14,13 +14,13 @@
     "generate-shrinkwrap": "npm prune && npm shrinkwrap --only=prod",
     "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
     "bumping": "node ./node_modules/npmversion/bin/npmversion",
-    "bump-release": "npm test && npm run bumping -- --unpreid --git-push",
-    "bump-major": "npm test && npm run bumping -- --increment major --git-push",
-    "bump-minor": "npm test && npm run bumping -- --increment minor --git-push",
-    "bump-patch": "npm test && npm run bumping -- --increment patch --git-push",
-    "bump-major-beta": "npm run bumping -- --increment major --preid beta --nogit-tag --git-push",
-    "bump-minor-beta": "npm run bumping -- --increment minor --preid beta --nogit-tag --git-push",
-    "bump-patch-beta": "npm run bumping -- --increment patch --preid beta --nogit-tag --git-push"
+    "bump-release": "npm test && npm run bumping -- --unpreid",
+    "bump-major": "npm test && npm run bumping -- --increment major",
+    "bump-minor": "npm test && npm run bumping -- --increment minor",
+    "bump-patch": "npm test && npm run bumping -- --increment patch",
+    "bump-major-beta": "npm run bumping -- --increment major --preid beta --nogit-tag",
+    "bump-minor-beta": "npm run bumping -- --increment minor --preid beta --nogit-tag",
+    "bump-patch-beta": "npm run bumping -- --increment patch --preid beta --nogit-tag"
   },
   "repository": {
     "type": "git",

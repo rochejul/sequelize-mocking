@@ -1,8 +1,8 @@
 {
     "force-preid": true,
     "nogit-commit": false,
-    "nogit-tag": true,
-    "git-push": false,
+    "nogit-tag": false,
+    "git-push": true,
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
     "increment": "minor"
