@@ -51,6 +51,12 @@ describe('User - UserService (using sequelizeMockingMocha) - ', function () {
     sequelizeMockingMocha(
         Database.getInstance(),
         path.resolve(path.join(__dirname, './fake-users-database.json')),
+        /* Or load array of files
+        [
+            path.resolve(path.join(__dirname, './fake-users-database.json')),
+            path.resolve(path.join(__dirname, './fake-candy-database.json')),
+        ]
+        */
         { 'logging': false }
     );
 
