@@ -753,6 +753,40 @@ describe('SequelizeMocking - ', function () {
                 });
         });
 
+        it('Should detect load the fixture models files from array and return into the Promise the sequelize instance', function () {
+            let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:',
+                'define': {
+                    'timestamps': false,
+                    'paranoid': false
+                }
+            });
+
+            sequelizeInstance.define('myModel', {
+                'id': {
+                    'type': Sequelize.INTEGER,
+                    'autoIncrement': true,
+                    'primaryKey': true
+                },
+                'description': Sequelize.TEXT
+            });
+
+            return sequelizeInstance
+                .sync()
+                .then(function () {
+                    return SequelizeMocking
+                        .loadFixtureFile(sequelizeInstance, [
+                            path.resolve(path.join(__dirname, './my-model-database.json')),
+                            path.resolve(path.join(__dirname, './my-model-1-database.json'))
+                        ]);
+                })
+                .then(function (sequelize) {
+                    expect(sequelize).equals(sequelizeInstance);
+                });
+        });
+
         it('should not log if the logging option is false', function () {
             let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
