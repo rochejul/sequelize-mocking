@@ -1,0 +1,10 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "email": "roche.jul@gmail.com",
+      "password": "5a5fd34f5b3ab16aff01a05dbf570d737e3edec3",
+      "salt": "abcdef"
+    }
+  }
+]
