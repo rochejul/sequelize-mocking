@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "chai": "4.0.2",
-    "eslint": "4.2.0",
+    "eslint": "4.7.1",
     "mocha": "3.4.2",
     "mysql2": "1.3.5",
     "npmversion": "1.3.3",
