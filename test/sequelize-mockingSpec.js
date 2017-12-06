@@ -1296,13 +1296,15 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            let spy = sinonSandbox.spy(mockedSequelizeInstance, 'drop');
+            let spyGetQueryInterface = sinonSandbox.spy(mockedSequelizeInstance, 'getQueryInterface');
+            let spyDropAllTables = sinonSandbox.spy(mockedSequelizeInstance.getQueryInterface(), 'dropAllTables');
+
             return SequelizeMocking
                 .restore(mockedSequelizeInstance)
                 .then(function () {
-                    expect(spy.called).to.be.true;
-                    expect(spy.calledOnce).to.be.true;
-                    expect(spy.calledWith({ 'logging': true })).to.be.true;
+                    expect(spyGetQueryInterface.called).to.be.true;
+                    expect(spyDropAllTables.called).to.be.true;
+                    expect(spyDropAllTables.calledWith({ 'logging': true })).to.be.true;
                 });
         });
 
@@ -1313,13 +1315,14 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            let spy = sinonSandbox.spy(mockedSequelizeInstance, 'drop');
+            let spyDropAllTables = sinonSandbox.spy(mockedSequelizeInstance.getQueryInterface(), 'dropAllTables');
+
             return SequelizeMocking
                 .restore(mockedSequelizeInstance, { 'logging': false })
                 .then(function () {
-                    expect(spy.called).to.be.true;
-                    expect(spy.calledOnce).to.be.true;
-                    expect(spy.calledWith({ 'logging': false })).to.be.true;
+                    expect(spyDropAllTables.called).to.be.true;
+                    expect(spyDropAllTables.calledOnce).to.be.true;
+                    expect(spyDropAllTables.calledWith({ 'logging': false })).to.be.true;
                 });
         });
     });
