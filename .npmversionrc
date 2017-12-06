@@ -5,5 +5,5 @@
     "git-push": true,
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
-    "increment": "minor"
+    "increment": "patch"
 }
