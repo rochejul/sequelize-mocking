@@ -42,7 +42,7 @@
   "dependencies": {
     "lodash": "4.17.4",
     "sequelize-fixtures": "0.6.0",
-    "sqlite3": "3.1.11"
+    "sqlite3": "3.1.13"
   },
   "engines": {
     "node": ">=4.0.0",
