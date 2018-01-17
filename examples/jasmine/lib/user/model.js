@@ -37,7 +37,7 @@ const UserModel = Database
             'type': Database.FIELD_TYPE_ENUM.STRING,
             'allowNull': false
         },
-        'age':  {
+        'age': {
             'type': Database.FIELD_TYPE_ENUM.INTEGER,
             'defaultValue': 42,
             'validate': {

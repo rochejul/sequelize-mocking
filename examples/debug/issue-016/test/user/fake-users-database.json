@@ -1,0 +1,12 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "uuid": "f64f2940-fae4-11e7-8c5f-ef356f279131",
+      "firstName": "John",
+      "lastName": "Doe",
+      "age": 25,
+      "description": null
+    }
+  }
+]

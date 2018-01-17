@@ -1,0 +1,25 @@
+{
+  "name": "node-sequelize-with-mocks",
+  "version": "1.0.0",
+  "description": "NodeJs projet to test Sequelize as ORM, but moreover, to see how to make some mocks and tests around Sequelize",
+  "main": "./lib/index.js",
+  "scripts": {
+    "start": "node ./lib/index.js",
+    "start-mysql": "node ./lib/index.js --mysql",
+    "test": "node ./test/index.js",
+    "test-mysql": "node ./test/index.js --mysql"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": ">=4.0.0",
+    "npm": ">=2.0.0"
+  },
+  "dependencies": {
+    "sequelize": "4.13.10",
+    "uuid": "3.2.1"
+  },
+  "devDependencies": {
+    "jasmine": "2.4.1",
+    "sequelize-mocking": "../../../"
+  }
+}
