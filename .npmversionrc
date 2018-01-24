@@ -3,7 +3,12 @@
     "nogit-commit": false,
     "nogit-tag": false,
     "git-push": true,
+    "git-create-branch": false,
+    "git-branch-message": "releases/%s",
     "git-commit-message": "Release version: %s",
+    "git-remote-name": "origin",
     "git-tag-message": "v%s",
-    "increment": "patch"
+    "increment": "patch",
+    "jsonFiles": [
+    ]
 }
