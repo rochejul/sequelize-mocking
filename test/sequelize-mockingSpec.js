@@ -1008,6 +1008,7 @@ describe('SequelizeMocking - ', function () {
             });
 
             let usedDialect = sequelizeInstance.dialect;
+            let usedQueryInterface = sequelizeInstance.queryInterface;
             let usedConnectionManager = sequelizeInstance.connectionManager;
 
             let sequelizeInstance2 = new Sequelize('my-database2', 'mysqlUserName', 'mysqlUserPassword', {
@@ -1024,10 +1025,14 @@ describe('SequelizeMocking - ', function () {
             expect(sequelizeInstance.__dialect).to.exist;
             expect(sequelizeInstance.__dialect).equals(usedDialect);
 
+            expect(sequelizeInstance.__queryInterface).to.exist;
+            expect(sequelizeInstance.__queryInterface).equals(usedQueryInterface);
+
             expect(sequelizeInstance.__connectionManager).to.exist;
             expect(sequelizeInstance.__connectionManager).equals(usedConnectionManager);
 
             expect(sequelizeInstance.dialect === sequelizeInstance2.dialect).to.be.true;
+            expect(sequelizeInstance.queryInterface === sequelizeInstance2.queryInterface).to.be.true;
             expect(sequelizeInstance.connectionManager === sequelizeInstance2.connectionManager).to.be.true;
         });
     });
@@ -1245,6 +1250,7 @@ describe('SequelizeMocking - ', function () {
 
             mockedSequelizeInstance.__originalSequelize = sequelizeInstance;
             mockedSequelizeInstance.__dialect = sequelizeInstance.dialect;
+            mockedSequelizeInstance.__queryInterface = sequelizeInstance.queryInterface;
             mockedSequelizeInstance.__connectionManager = sequelizeInstance.connectionManager;
 
             let spy = sinonSandbox.spy(SequelizeMocking, 'modifyConnection');
