@@ -1,0 +1,64 @@
+const path = require('path');
+const chai = require('chai');
+const sinon = require('sinon');
+
+const sequelizeMockingMocha = require('sequelize-mocking').sequelizeMockingMocha;
+
+describe('Users Controller', function () {
+    const Database = require('./index');
+    const User = require('./controller');
+
+    let sandbox = null;
+
+    const formFields = {
+        "id": null,
+        "docto": null,
+        "nome": null,
+        "email": null,
+        "telefone": null,
+        "ativo": null,
+    };
+
+	before(function () {
+        sandbox = sinon.sandbox.create();
+
+        formFields.usuario_nome = 'User Test Name';
+        formFields.usuario_cpf = '03571283031';
+        formFields.usuario_email = 'usuario@email.com';
+        formFields.usuario_telefone = '(47) 99999-9999';
+	});
+
+	after(function () {
+        sandbox && sandbox.restore();
+	});
+
+    sequelizeMockingMocha(
+        Database,
+        [
+            path.resolve(path.join(__dirname, './../data/user-db.json')),
+        ],
+        { 'logging': false }
+    );
+
+    it('Controller must exists', function () {
+        chai.expect(User).to.exist;
+    });
+
+    describe('Insert Method.', function () {
+        it('Must Exists', function () {
+            chai.expect(User.insert).to.exist;
+        });
+
+        it('Should create a new register.', function (done) {
+            // var spy = sandbox.spy(User, 'genAccessKey');
+            // chai.expect(spy.called).to.be.true;
+            // chai.expect(spy.calledOnce).to.be.true;
+            // chai.expect(spy.calledWith()).to.be.true;
+
+            User.insert({ 'form': formFields }, function (err, u) {
+                chai.expect(err).to.be.null;
+                done();
+            });
+        });
+    });
+});

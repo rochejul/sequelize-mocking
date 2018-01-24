@@ -1,0 +1,48 @@
+const Sequelize = require('sequelize');
+const sql = require('./index');
+
+var user = sql.define('USUARIOS', {
+	id: { type: Sequelize.INTEGER, primaryKey: true, allowNull: false, autoIncrement: true },
+	docto: {
+		type: Sequelize.STRING,
+		allowNull: false,
+		validate: {
+			is: {args: ["^[0-9]{11}$","g"], msg: 'errMsg'},
+		},
+		set(val) {
+			this.setDataValue('docto', val.replace(/(\.|-)/g,''));
+		},
+	},
+	email: {
+		type: Sequelize.STRING,
+		allowNull: false,
+		validate: {
+			isEmail: {msg: 'errMsg'},
+		},
+
+		set(val) {
+			this.setDataValue('email', val.toUpperCase());
+		},
+	},
+	nome: {
+		type: Sequelize.STRING,
+		allowNull: false,
+		set(val) {
+			this.setDataValue('nome', val.toUpperCase());
+		},
+	},
+	senha: { type: Sequelize.STRING, allowNull: true },
+	telefone: {
+		type: Sequelize.STRING(20),
+		allowNull: true,
+		set(val) {
+			this.setDataValue('telefone', val.replace(/(\(|\)|-)/g,''));
+		},
+	},
+	ativo: { type: Sequelize.INTEGER, allowNull: true, defaultValue: 1 },
+}, {
+	freezeTableName: true,
+	timestamps: false
+});
+
+module.exports = usuarios;

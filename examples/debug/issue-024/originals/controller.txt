@@ -1,0 +1,37 @@
+var sql = require('./index');
+var User = require('./userModel');
+
+var op = sql.Op;
+
+function addSomething(data, transaction) {
+	return sql.Promise.map(data, function (idSmth) {
+		return otherModel.create(data, transaction);
+	}).catch(function (err) {
+		throw new Error('Err');
+	});
+}
+
+exports.insert = function (input, callback) {
+	var hash = genAccessKey();
+	var insert_data = {
+		'nome': input.form.nome,
+		'docto': input.form.docto,
+		'email': input.form.email,
+		'telefone': input.form.telefone,
+		'senha': hash,
+	};
+
+	sql.transaction( function(t) {
+		return User.create(insert_data, {transaction: t}).then(function (user) {
+			insert_data.id = user.get('id');
+
+			return Promise.all([
+				addSomething(insert_data, {transaction: t}),
+			]);
+		});
+	}).then( function (tr) {
+		callback(null, tr);
+	}).catch( function (err) {
+		callback(err);
+	});
+}

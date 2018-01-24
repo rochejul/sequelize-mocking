@@ -1,0 +1,10 @@
+const Sequelize = require('sequelize');
+
+const sql = new Sequelize('database', 'username', 'password', {
+	host: host,
+	dialect: 'mysql',
+	logging: false,
+	operatorsAliases: Sequelize.Op
+});
+
+module.exports = sql;
