@@ -198,7 +198,7 @@ describe('SequelizeMocking - ', function () {
             let DuplicatedMyModel = SequelizeMocking.copyModel(mockedSequelizeInstance, MyModel);
             expect(DuplicatedMyModel).not.equals(MyModel);
             expect(DuplicatedMyModel.options).not.equals(MyModel.options);
-            expect(DuplicatedMyModel.attributes).not.equals(MyModel.attributes);
+            expect(DuplicatedMyModel.rawAttributes).not.equals(MyModel.rawAttributes);
         });
 
         it('duplicate a model with upgrading the modelManager of the Sequelize instance', function () {
