@@ -41,7 +41,7 @@
   "homepage": "https://github.com/rochejul/sequelize-mocking#readme",
   "dependencies": {
     "lodash": "4.17.11",
-    "sequelize-fixtures": "0.9.0",
+    "sequelize-fixtures": "0.10.0",
     "sqlite3": "4.0.2"
   },
   "engines": {
