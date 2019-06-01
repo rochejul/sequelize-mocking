@@ -66,6 +66,7 @@ describe('SequelizeMocking - ', function () {
                 .deep
                 .equals({
                     'benchmark': false,
+                    'clientMinMessages': 'warning',
                     'databaseVersion': 0,
                     'define': {
                         'engine': 'MYISAM',
@@ -73,6 +74,7 @@ describe('SequelizeMocking - ', function () {
                         'timestamps': false
                     },
                     'dialect': 'sqlite',
+                    'dialectModule': null,
                     'dialectModulePath': null,
                     'hooks': {},
                     'host': 'localhost',
@@ -80,7 +82,6 @@ describe('SequelizeMocking - ', function () {
                     'logging': console.log,
                     'native': false,
                     'omitNull': false,
-                    'operatorsAliases': true,
                     'pool': {
                         'idle': 10000,
                         'max': 5,
@@ -97,6 +98,7 @@ describe('SequelizeMocking - ', function () {
                         'max': 5
                     },
                     'ssl': undefined,
+                    'standardConformingStrings': true,
                     'storage': ':memory:',
                     'sync': {},
                     'timezone': '+00:00',
