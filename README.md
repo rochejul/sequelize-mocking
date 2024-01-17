@@ -1,5 +1,7 @@
 # sequelize-mocking
 
+This repository was forked from [rochejul/sequelize-mocking](https://github.com/rochejul/sequelize-mocking).
+
 Sequelize extension to deal with data-mocking for testing
 
  - it was tested with Sequelize 3.19.3 before 1.0.0
