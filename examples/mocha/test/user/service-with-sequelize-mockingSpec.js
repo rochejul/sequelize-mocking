@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 /**
  * Test around the @{UserService}
  *
  * @module test/user/service
  */
 
-'use strict';
+
 
 const chai = require('chai');
 const sinon = require('sinon');
@@ -42,7 +43,7 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
 
     afterEach(function (done) {
         SequelizeMocking
-            .restore(sequelizeInstance)
+            .restoreAndTropTables(sequelizeInstance)
             .then(function () {
                 done();
             })
@@ -50,12 +51,12 @@ describe('User - UserService (using SequelizeMocking) - ', function () {
     });
 
     it('the service shall exist', function () {
-       chai.expect(UserService).to.exist;
+        chai.expect(UserService).to.exist;
     });
 
     describe('and the method findAll shall ', function () {
         it('exist', function () {
-           chai.expect(UserService.findAll).to.exist;
+            chai.expect(UserService.findAll).to.exist;
         });
 
         it('shall returns an array of user', function () {

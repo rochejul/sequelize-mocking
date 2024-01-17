@@ -247,7 +247,7 @@ describe('SequelizeMocking - ', function () {
 
     describe('and the method "create" should ', function () {
         it('exist', function () {
-            expect(SequelizeMocking.create).to.exist;
+            expect(SequelizeMocking.createAndSync).to.exist;
         });
 
         it('should use the copyCurrentModels, modifyModelReferences, modifyConnection and hookNewModel methods', function () {
@@ -266,7 +266,7 @@ describe('SequelizeMocking - ', function () {
             let stubModifyConnection = sinonSandbox.stub(SequelizeMocking, 'modifyConnection').callsFake(_.noop);
             let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
-            SequelizeMocking.create(sequelizeInstance);
+            SequelizeMocking.createAndSync(sequelizeInstance);
 
             expect(stubCopy.called).to.be.true;
             expect(stubCopy.calledOnce).to.be.true;
@@ -301,7 +301,7 @@ describe('SequelizeMocking - ', function () {
             let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             return SequelizeMocking
-                .create(sequelizeInstance)
+                .createAndSync(sequelizeInstance)
                 .then(function (mockedSequelize) {
                     expect(mockedSequelize).to.be.instanceof(Sequelize);
                     expect(mockedSequelize).not.equals(sequelizeInstance);
@@ -324,7 +324,7 @@ describe('SequelizeMocking - ', function () {
             let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             return SequelizeMocking
-                .create(sequelizeInstance)
+                .createAndSync(sequelizeInstance)
                 .then(function (mockedSequelize) {
                     expect(mockedSequelize.__originalSequelize).not.to.be.undefined;
                     expect(mockedSequelize.__originalSequelize).to.be.instanceof(Sequelize);
@@ -348,7 +348,7 @@ describe('SequelizeMocking - ', function () {
             let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             return SequelizeMocking
-                .create(sequelizeInstance, { 'logging': false })
+                .createAndSync(sequelizeInstance, { 'logging': false })
                 .then(function (mockedSequelize) {
                     expect(stubHook.called).to.be.true;
                     expect(stubHook.calledOnce).to.be.true;
@@ -1198,7 +1198,7 @@ describe('SequelizeMocking - ', function () {
 
     describe('and the method "restore" should ', function () {
         it('exist', function () {
-           expect(SequelizeMocking.restore).to.exist;
+           expect(SequelizeMocking.restoreAndTropTables).to.exist;
         });
 
         it('should call "unhookNewModel" method', function () {
@@ -1209,7 +1209,7 @@ describe('SequelizeMocking - ', function () {
             });
 
             let spy = sinonSandbox.spy(SequelizeMocking, 'unhookNewModel');
-            SequelizeMocking.restore(mockedSequelizeInstance);
+            SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWith(mockedSequelizeInstance)).to.be.true;
@@ -1231,7 +1231,7 @@ describe('SequelizeMocking - ', function () {
             mockedSequelizeInstance.__originalSequelize = sequelizeInstance;
 
             let spy = sinonSandbox.spy(SequelizeMocking, 'modifyModelReferences');
-            SequelizeMocking.restore(mockedSequelizeInstance);
+            SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
@@ -1256,7 +1256,7 @@ describe('SequelizeMocking - ', function () {
             mockedSequelizeInstance.__connectionManager = sequelizeInstance.connectionManager;
 
             let spy = sinonSandbox.spy(SequelizeMocking, 'modifyConnection');
-            SequelizeMocking.restore(mockedSequelizeInstance);
+            SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
             expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
@@ -1275,7 +1275,7 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            SequelizeMocking.restore(mockedSequelizeInstance);
+            SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(mockedSequelizeInstance.__originalSequelize).not.to.exist;
         });
 
@@ -1292,7 +1292,7 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
-            SequelizeMocking.restore(mockedSequelizeInstance);
+            SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(mockedSequelizeInstance.__dialect).not.to.exist;
             expect(mockedSequelizeInstance.__connectionManager).not.to.exist;
         });
@@ -1308,7 +1308,7 @@ describe('SequelizeMocking - ', function () {
             let spyDropAllTables = sinonSandbox.spy(mockedSequelizeInstance.getQueryInterface(), 'dropAllTables');
 
             return SequelizeMocking
-                .restore(mockedSequelizeInstance)
+                .restoreAndTropTables(mockedSequelizeInstance)
                 .then(function () {
                     expect(spyGetQueryInterface.called).to.be.true;
                     expect(spyDropAllTables.called).to.be.true;
@@ -1326,7 +1326,7 @@ describe('SequelizeMocking - ', function () {
             let spyDropAllTables = sinonSandbox.spy(mockedSequelizeInstance.getQueryInterface(), 'dropAllTables');
 
             return SequelizeMocking
-                .restore(mockedSequelizeInstance, { 'logging': false })
+                .restoreAndTropTables(mockedSequelizeInstance, { 'logging': false })
                 .then(function () {
                     expect(spyDropAllTables.called).to.be.true;
                     expect(spyDropAllTables.calledOnce).to.be.true;

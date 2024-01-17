@@ -137,7 +137,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'restore').callsFake(() => Promise.resolve());
+            sinonSandbox.stub(SequelizeMocking, 'restoreAndTropTables').callsFake(() => Promise.resolve());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
@@ -168,7 +168,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'restore').callsFake(() => Promise.reject());
+            sinonSandbox.stub(SequelizeMocking, 'restoreAndTropTables').callsFake(() => Promise.reject());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
@@ -215,7 +215,7 @@ describe('sequelizeMochingMocha - ', function () {
                 func(doneFunc);
             };
 
-            sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve());
+            sinonSandbox.stub(SequelizeMocking, 'createAndSync').callsFake(() => Promise.resolve());
 
             return new Promise(function(resolve, reject) {
                 let sequelizeInstance = new Sequelize('mocked-database', null, null, {
