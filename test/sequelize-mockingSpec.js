@@ -362,8 +362,8 @@ describe('SequelizeMocking - ', function () {
             expect(SequelizeMocking.createAndLoadFixtureFile).to.exist;
         });
 
-        it('call the "create" function', function () {
-            let stub = sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.reject());
+        it('call the "create" function', async function () {
+            let stub = sinonSandbox.spy(SequelizeMocking, 'create');
 
             let sequelizeInstance = new Sequelize('my-database', 'mysqlUserName', 'mysqlUserPassword', {
                 'host': 'localhost',
@@ -375,7 +375,7 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            SequelizeMocking.createAndLoadFixtureFile(sequelizeInstance, 'a/path', { 'logging': false });
+            await SequelizeMocking.createAndLoadFixtureFile(sequelizeInstance, path.join(__dirname, 'my-model-2-database.json'), { 'logging': false });
             expect(stub.called).to.be.true;
             expect(stub.calledOnce).to.be.true;
             expect(stub.calledWith(sequelizeInstance, { 'logging': false })).to.be.true;
