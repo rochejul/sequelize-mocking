@@ -43,7 +43,8 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "sequelize-fixtures": "^1.2.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "uuid": "9.0.1"
   },
   "engines": {
     "node": ">=6.0.0",

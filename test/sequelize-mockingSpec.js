@@ -1201,18 +1201,26 @@ describe('SequelizeMocking - ', function () {
            expect(SequelizeMocking.restoreAndTropTables).to.exist;
         });
 
-        it('should call "unhookNewModel" method', function () {
+        it('should call "unhookNewModel" method', async function () {
             let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
                 'host': 'localhost',
                 'dialect': 'sqlite',
                 'storage': ':memory:'
             });
 
+            let __originalSequelize = new Sequelize('my-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            mockedSequelizeInstance.__originalSequelize = __originalSequelize;
+
             let spy = sinonSandbox.spy(SequelizeMocking, 'unhookNewModel');
-            SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
+            await SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
-            expect(spy.calledWith(mockedSequelizeInstance)).to.be.true;
+            expect(spy.calledWith(__originalSequelize)).to.be.true;
         });
 
         it('should call "modifyModelReferences" method if the sequelize instance is a mocked one', function () {
@@ -1234,7 +1242,7 @@ describe('SequelizeMocking - ', function () {
             SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
-            expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
+            expect(spy.calledWith(sequelizeInstance, sequelizeInstance)).to.be.true;
         });
 
         it('should call "modifyConnection" method if the sequelize instance is a mocked one', function () {
@@ -1255,11 +1263,11 @@ describe('SequelizeMocking - ', function () {
             mockedSequelizeInstance.__queryInterface = sequelizeInstance.queryInterface;
             mockedSequelizeInstance.__connectionManager = sequelizeInstance.connectionManager;
 
-            let spy = sinonSandbox.spy(SequelizeMocking, 'modifyConnection');
+            let spy = sinonSandbox.spy(SequelizeMocking, 'restoreConnection');
             SequelizeMocking.restoreAndTropTables(mockedSequelizeInstance);
             expect(spy.called).to.be.true;
             expect(spy.calledOnce).to.be.true;
-            expect(spy.calledWith(mockedSequelizeInstance, sequelizeInstance)).to.be.true;
+            expect(spy.calledWith(sequelizeInstance)).to.be.true;
         });
 
         it('should remove "__originalSequelize" property', function () {
@@ -1304,6 +1312,12 @@ describe('SequelizeMocking - ', function () {
                 'storage': ':memory:'
             });
 
+            mockedSequelizeInstance.__originalSequelize = new Sequelize('my-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
             let spyGetQueryInterface = sinonSandbox.spy(mockedSequelizeInstance, 'getQueryInterface');
             let spyDropAllTables = sinonSandbox.spy(mockedSequelizeInstance.getQueryInterface(), 'dropAllTables');
 
@@ -1318,6 +1332,12 @@ describe('SequelizeMocking - ', function () {
 
         it('should use the "logging" option', function () {
             let mockedSequelizeInstance = new Sequelize('mocked-database', null, null, {
+                'host': 'localhost',
+                'dialect': 'sqlite',
+                'storage': ':memory:'
+            });
+
+            mockedSequelizeInstance.__originalSequelize = new Sequelize('my-database', null, null, {
                 'host': 'localhost',
                 'dialect': 'sqlite',
                 'storage': ':memory:'
