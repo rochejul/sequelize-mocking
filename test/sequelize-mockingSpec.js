@@ -102,7 +102,7 @@ describe('SequelizeMocking - ', function () {
                     'storage': ':memory:',
                     'sync': {},
                     'timezone': '+00:00',
-                    'transactionType': 'DEFERRED',
+                    'transactionType': 'IMMEDIATE',
                     'typeValidation': false
                 });
         });
