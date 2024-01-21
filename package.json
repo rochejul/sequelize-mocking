@@ -13,6 +13,7 @@
     "checkstyle": "npm run delete ./target/eslint-reporter-checkstyle.xml && node node_modules/eslint/bin/eslint.js --config=.eslintrc --output-file ./target/eslint-reporter-checkstyle.xml --format checkstyle ./lib",
     "generate-shrinkwrap": "npm prune && npm shrinkwrap --only=prod",
     "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+    "debug-test": "node ./node_modules/mocha/bin/mocha  --inspect=0.0.0.0:2034 --recursive --ui bdd --colors ./test",
     "bumping": "node ./node_modules/npmversion/bin/npmversion",
     "bump-release": "npm test && npm run bumping -- --unpreid --git-create-branch",
     "bump-major": "npm test && npm run bumping -- --git-create-branch --increment major",
@@ -24,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rochejul/sequelize-mocking.git"
+    "url": "git+https://github.com/Houzz/sequelize-mocking.git"
   },
   "keywords": [
     "Sequelize",
@@ -36,21 +37,23 @@
   "author": "Julien Roche",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rochejul/sequelize-mocking/issues"
+    "url": "https://github.com/Houzz/sequelize-mocking/issues"
   },
-  "homepage": "https://github.com/rochejul/sequelize-mocking#readme",
+  "homepage": "https://github.com/Houzz/sequelize-mocking#readme",
   "dependencies": {
-    "lodash": "4.17.13",
-    "sequelize-fixtures": "0.10.0",
-    "sqlite3": "4.0.8"
+    "lodash": "^4.17.21",
+    "sequelize-fixtures": "^1.2.0",
+    "sqlite3": "^5.1.7",
+    "uuid": "9.0.1"
   },
   "engines": {
     "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
   "devDependencies": {
+    "babel-eslint": "10.1.0",
     "chai": "4.0.2",
-    "eslint": "4.7.1",
+    "eslint": "8.56.0",
     "mocha": "5.2.0",
     "mysql2": "1.3.5",
     "npmversion": "1.7.0",

@@ -1,0 +1,9 @@
+[
+  {
+    "model": "Company",
+    "data": {
+      "id": 1,
+      "name": "mock-company-name"
+    }
+  }
+]

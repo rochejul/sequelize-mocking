@@ -9,311 +9,114 @@
 
 'use strict';
 
-describe('sequelizeMochingMocha - ', function () {
-    const expect = require('chai').expect;
-    const sinon = require('sinon');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
-    const path = require('path');
-    const _ = require('lodash');
-    const Sequelize = require('sequelize');
+const path = require('path');
+const _ = require('lodash');
+const Sequelize = require('sequelize');
+const sequelizeMockingMocha = require('../lib/sequelize-mocking-mocha');
 
-    const SequelizeMocking = require('../lib/sequelize-mocking');
-    const sequelizeMochingMocha = require('../lib/sequelize-mocking-mocha');
+const userModelAttributes = {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    name: Sequelize.TEXT
+};
 
-    it('shall exist', function () {
-        expect(sequelizeMochingMocha).to.exist;
-        expect(_.isPlainObject(sequelizeMochingMocha)).to.be.false;
-    });
-
-    it('should be a function', function () {
-        expect(sequelizeMochingMocha).to.exist;
-        expect(sequelizeMochingMocha).to.be.a('function');
-    });
-
-    let sinonSandbox;
+describe('sequelizeMockingMocha - ', function () {
+    let sandbox;
 
     beforeEach(function () {
-        sinonSandbox = sinon.sandbox.create();
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function () {
-        sinonSandbox.restore();
+        sandbox.restore();
     });
 
-    describe('should detect Mocha and Jasmine functions, and ', function () {
-        beforeEach(function () {
-            global.__beforeEach = global.beforeEach;
-            global.beforeEach = null;
+    const sequelize = new Sequelize('mysql://user:xyzzy@localhost:3306/');
+    sequelize.define('User', userModelAttributes);
+    sequelize.define('Company', userModelAttributes);
 
-            global.__afterEach = global.afterEach;
-            global.afterEach = null;
-        });
-
-        afterEach(function () {
-            global.beforeEach = global.__beforeEach;
-            global.afterEach = global.__afterEach;
-
-            delete global.__beforeEach;
-            delete global.__afterEach;
-        });
-
-        it('should do nothing if only beforeEach is available', function () {
-            global.beforeEach = _.noop;
-
-            let spyBefore = sinonSandbox.spy(global, 'beforeEach');
-
-            let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                'host': 'localhost',
-                'dialect': 'sqlite',
-                'storage': ':memory:'
-            });
-
-            sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-            expect(spyBefore.called).to.be.false;
-        });
-
-        it('should do nothing if only afterEach is available', function () {
-            global.afterEach = _.noop;
-
-            let spyAfter = sinonSandbox.spy(global, 'afterEach');
-
-            let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                'host': 'localhost',
-                'dialect': 'sqlite',
-                'storage': ':memory:'
-            });
-
-            sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-            expect(spyAfter.called).to.be.false;
-        });
-
-        it('should do something if both afterEach and beforeEach functions are available', function () {
-            global.beforeEach = _.noop;
-            global.afterEach = _.noop;
-
-            let spyBefore = sinonSandbox.spy(global, 'beforeEach');
-            let spyAfter = sinonSandbox.spy(global, 'afterEach');
-
-            let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                'host': 'localhost',
-                'dialect': 'sqlite',
-                'storage': ':memory:'
-            });
-
-            sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-            expect(spyBefore.called).to.be.true;
-            expect(spyBefore.calledOnce).to.be.true;
-            expect(spyBefore.calledWith(sinon.match.func)).to.be.true;
-
-            expect(spyAfter.called).to.be.true;
-            expect(spyAfter.calledOnce).to.be.true;
-            expect(spyAfter.calledWith(sinon.match.func)).to.be.true;
-        });
-    });
-
-    describe('should on the afterEach method ', function () {
-        beforeEach(function () {
-            global.__afterEach = global.afterEach;
-            global.__beforeEach = global.beforeEach;
-            global.beforeEach = _.noop;
-        });
-
-        afterEach(function () {
-            global.afterEach = global.__afterEach;
-            global.beforeEach = global.__beforeEach;
-
-            delete global.__afterEach;
-            delete global.__beforeEach;
-        });
-
-        it('call the restore method', function () {
-            let count = 0;
-            let doneFunc = () => count++;
-
-            global.afterEach = function (func) {
-                func(doneFunc);
-            };
-
-            sinonSandbox.stub(SequelizeMocking, 'restore').callsFake(() => Promise.resolve());
-
-            return new Promise(function(resolve, reject) {
-                let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                    'host': 'localhost',
-                    'dialect': 'sqlite',
-                    'storage': ':memory:'
-                });
-
-                sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-                setTimeout(function () {
-                    try {
-                        expect(count).equals(1);
-                        resolve();
-
-                    } catch (ex) {
-                        reject(ex);
-                    }
-                }, 150);
-            });
-        });
-
-        it('call the afterEach done parameter even if an error occured', function () {
-            let count = 0;
-            let doneFunc = () => count++;
-
-            global.afterEach = function (func) {
-                func(doneFunc);
-            };
-
-            sinonSandbox.stub(SequelizeMocking, 'restore').callsFake(() => Promise.reject());
-
-            return new Promise(function(resolve, reject) {
-                let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                    'host': 'localhost',
-                    'dialect': 'sqlite',
-                    'storage': ':memory:'
-                });
-
-                sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-                setTimeout(function () {
-                    try {
-                        expect(count).equals(1);
-                        resolve();
-
-                    } catch (ex) {
-                        reject(ex);
-                    }
-                }, 150);
-            });
-        });
-    });
-
-    describe('should on the beforeEach method ', function () {
-        beforeEach(function () {
-            global.__afterEach = global.afterEach;
-            global.__beforeEach = global.beforeEach;
-            global.afterEach = _.noop;
-        });
-
-        afterEach(function () {
-            global.afterEach = global.__afterEach;
-            global.beforeEach = global.__beforeEach;
-
-            delete global.__afterEach;
-            delete global.__beforeEach;
-        });
-
-        it('call the create method if no fixture path is set', function () {
-            let count = 0;
-            let doneFunc = () => count++;
-
-            global.beforeEach = function (func) {
-                func(doneFunc);
-            };
-
-            sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve());
-
-            return new Promise(function(resolve, reject) {
-                let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                    'host': 'localhost',
-                    'dialect': 'sqlite',
-                    'storage': ':memory:'
-                });
-
-                sequelizeMochingMocha(sequelizeInstance);
-
-                setTimeout(function () {
-                    try {
-                        expect(count).equals(1);
-                        resolve();
-
-                    } catch (ex) {
-                        reject(ex);
-                    }
-                }, 150);
-            });
-        });
-
-        it('call the createAndLoadFixtureFile method if a fixture path is set', function () {
-            let count = 0;
-            let doneFunc = () => count++;
-
-            global.beforeEach = function (func) {
-                func(doneFunc);
-            };
-
-            sinonSandbox.stub(SequelizeMocking, 'createAndLoadFixtureFile').callsFake(() => Promise.resolve());
-
-            return new Promise(function(resolve, reject) {
-                let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                    'host': 'localhost',
-                    'dialect': 'sqlite',
-                    'storage': ':memory:'
-                });
-
-                sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-                setTimeout(function () {
-                    try {
-                        expect(count).equals(1);
-                        resolve();
-
-                    } catch (ex) {
-                        reject(ex);
-                    }
-                }, 150);
-            });
-        });
-
-        it('call the beforeEach done parameter even if an error occured', function () {
-            let count = 0;
-            let doneFunc = () => count++;
-
-            global.beforeEach = function (func) {
-                func(doneFunc);
-            };
-
-            sinonSandbox.stub(SequelizeMocking, 'createAndLoadFixtureFile').callsFake(() => Promise.reject());
-
-            return new Promise(function(resolve, reject) {
-                let sequelizeInstance = new Sequelize('mocked-database', null, null, {
-                    'host': 'localhost',
-                    'dialect': 'sqlite',
-                    'storage': ':memory:'
-                });
-
-                sequelizeMochingMocha(sequelizeInstance, 'a/path/to/fixture');
-
-                setTimeout(function () {
-                    try {
-                        expect(count).equals(1);
-                        resolve();
-
-                    } catch (ex) {
-                        reject(ex);
-                    }
-                }, 150);
-            });
-        });
-    });
-
-    describe('should deal with multiple models', function () {
-        const sequelize = new Sequelize('mysql://user:xyzzy@localhost:3306/');
-        const User = sequelize.define('User', { });
-        const OtherObject = sequelize.define('OtherObject', { });
-
-        sequelizeMochingMocha(
+    describe('should load users from one mock file', function () {
+        sequelizeMockingMocha(
             sequelize,
-            path.resolve(path.join(__dirname, './user-database.json')),
+            path.resolve(path.join(__dirname, './user-data.json')),
             { 'logging': false }
         );
 
-        it('', function () {
-            expect(User).to.exist;
+        it('test that user is loaded from mock file', async function () {
+            const user = await sequelize.models.User.findByPk(1);
+            expect(user.name).to.eql('mock-user-name')
         });
+    });
+
+    describe('should load users from multiple mock file', function () {
+        sequelizeMockingMocha(
+            sequelize,
+            [
+                path.resolve(path.join(__dirname, './user-data.json')),
+                path.resolve(path.join(__dirname, './company-data.json'))
+            ],
+            { 'logging': false }
+        );
+
+        it('test that user and company are loaded from mock file', async function () {
+            const user = await sequelize.models.User.findByPk(1);
+            expect(user.name).to.eql('mock-user-name');
+
+            const company = await sequelize.models.Company.findByPk(1);
+            expect(company.name).to.eql('mock-company-name')
+        });
+    });
+
+    describe('should have write access to db', function () {
+        sequelizeMockingMocha(
+            sequelize,
+            [
+                path.resolve(path.join(__dirname, './user-data.json')),
+                path.resolve(path.join(__dirname, './company-data.json'))
+            ],
+            { 'logging': false }
+        );
+
+        it('test that user and company are created', async function () {
+            await sequelize.models.User.create({ id: 2, name: 'created-user' });
+            const user = await sequelize.models.User.findByPk(2);
+            expect(user.name).to.eql('created-user');
+
+            await sequelize.models.Company.create({ id: 2, name: 'created-company' });
+            const company = await sequelize.models.Company.findByPk(2);
+            expect(company.name).to.eql('created-company')
+        });
+    });
+
+    describe('should restore db for each test', function () {
+        sequelizeMockingMocha(
+            sequelize,
+            [
+                path.resolve(path.join(__dirname, './user-data.json')),
+                path.resolve(path.join(__dirname, './company-data.json'))
+            ],
+            { 'logging': false }
+        );
+
+        for (let index = 0; index < 5; index++) {
+            it(`#${index} test that the db is clean and dirty it`, async function () {
+                const users = await sequelize.models.User.findAll({ where: {} });
+                expect(users.length).to.eql(1);
+                expect(users[0].name).to.eql('mock-user-name');
+
+                const companies = await sequelize.models.Company.findAll({ where: {} });
+                expect(companies.length).to.eql(1);
+                expect(companies[0].name).to.eql('mock-company-name')
+
+                await sequelize.models.User.create({ id: 2, name: 'created-user' });
+                await sequelize.models.Company.create({ id: 2, name: 'created-company' });
+            });
+        }
     });
 });

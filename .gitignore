@@ -38,3 +38,4 @@ target
 
 # IDE project folder
 .idea
+.sequelize-mocking-temp

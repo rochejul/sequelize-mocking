@@ -1,25 +1,20 @@
 # sequelize-mocking
 
-[![Build Status](https://travis-ci.org/rochejul/sequelize-mocking.svg?branch=master)](https://travis-ci.org/rochejul/sequelize-mocking)[![Dependency Status](https://david-dm.org/rochejul/sequelize-mocking.svg)](https://david-dm.org/rochejul/sequelize-mocking)
-[![devDependency Status](https://david-dm.org/rochejul/sequelize-mocking/dev-status.svg)](https://david-dm.org/rochejul/sequelize-mocking#info=devDependencies)
-
-[![Known Vulnerabilities](https://snyk.io/test/github/rochejul/sequelize-mocking/badge.svg)](https://snyk.io/test/github/rochejul/sequelize-mocking)
-
-[![NPM](https://nodei.co/npm/sequelize-mocking.png?downloads=true&downloadRank=true)](https://nodei.co/npm/sequelize-mocking/)
-[![NPM](https://nodei.co/npm-dl/sequelize-mocking.png?&months=6&height=3)](https://nodei.co/npm/sequelize-mocking/)
-
+This repository was forked from [rochejul/sequelize-mocking](https://github.com/rochejul/sequelize-mocking).
 
 Sequelize extension to deal with data-mocking for testing
-
- - it was tested with Sequelize 3.19.3 before 1.0.0
- - it was tested with Sequelize 4.3.1 since 1.0.0.
- - it was tested with Sequelize 5.3.0 since 2.0.0
  
  **And you have to declare in your package.json the expected sequelize version**
 
 It will use the sqlite database for mocked database, will recreate it for database.
 
-Can be integrated with Mocha and Jasmine.
+Can be integrated with Mocha.
+
+Make sure to add the following line to `.gitignore`
+
+```
+.sequelize-mocking-temp
+```
 
 A sample of use:
 
