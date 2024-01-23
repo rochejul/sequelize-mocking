@@ -13,7 +13,6 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 const path = require('path');
-const _ = require('lodash');
 const Sequelize = require('sequelize');
 const sequelizeMockingMocha = require('../lib/sequelize-mocking-mocha');
 
@@ -50,7 +49,7 @@ describe('sequelizeMockingMocha - ', function () {
 
         it('test that user is loaded from mock file', async function () {
             const user = await sequelize.models.User.findByPk(1);
-            expect(user.name).to.eql('mock-user-name')
+            expect(user.name).to.eql('mock-user-name');
         });
     });
 
@@ -69,7 +68,7 @@ describe('sequelizeMockingMocha - ', function () {
             expect(user.name).to.eql('mock-user-name');
 
             const company = await sequelize.models.Company.findByPk(1);
-            expect(company.name).to.eql('mock-company-name')
+            expect(company.name).to.eql('mock-company-name');
         });
     });
 
@@ -90,7 +89,7 @@ describe('sequelizeMockingMocha - ', function () {
 
             await sequelize.models.Company.create({ id: 2, name: 'created-company' });
             const company = await sequelize.models.Company.findByPk(2);
-            expect(company.name).to.eql('created-company')
+            expect(company.name).to.eql('created-company');
         });
     });
 
@@ -112,7 +111,7 @@ describe('sequelizeMockingMocha - ', function () {
 
                 const companies = await sequelize.models.Company.findAll({ where: {} });
                 expect(companies.length).to.eql(1);
-                expect(companies[0].name).to.eql('mock-company-name')
+                expect(companies[0].name).to.eql('mock-company-name');
 
                 await sequelize.models.User.create({ id: 2, name: 'created-user' });
                 await sequelize.models.Company.create({ id: 2, name: 'created-company' });

@@ -51,7 +51,7 @@
     "npm": ">=3.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "10.1.0",
+    "@babel/eslint-parser": "7.23.3",
     "chai": "4.0.2",
     "eslint": "8.56.0",
     "mocha": "5.2.0",

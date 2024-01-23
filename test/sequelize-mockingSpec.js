@@ -85,7 +85,7 @@ describe('SequelizeMocking - ', function () {
                     'pool': {
                         'idle': 10000,
                         'max': 5,
-                        'min': 0,
+                        'min': 0
                     },
                     'protocol': 'tcp',
                     'query': {},
@@ -108,7 +108,7 @@ describe('SequelizeMocking - ', function () {
         });
 
         it('does not affect the options of the sequelize instance passed as parameter', function () {
-            let adaptedSequelizeOptions = SequelizeMocking.adaptSequelizeOptions(sequelizeInstance);
+            SequelizeMocking.adaptSequelizeOptions(sequelizeInstance);
             expect(sequelizeInstance.options).deep.equals(sequelizeInstanceOptions);
         });
 
@@ -296,9 +296,9 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
-            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             return SequelizeMocking
                 .createAndSync(sequelizeInstance)
@@ -319,9 +319,9 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
-            let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             return SequelizeMocking
                 .createAndSync(sequelizeInstance)
@@ -343,13 +343,13 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stubCopy = sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
-            let stubModify = sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'copyCurrentModels').callsFake(_.noop);
+            sinonSandbox.stub(SequelizeMocking, 'modifyModelReferences').callsFake(_.noop);
             let stubHook = sinonSandbox.stub(SequelizeMocking, 'hookNewModel').callsFake(_.noop);
 
             return SequelizeMocking
                 .createAndSync(sequelizeInstance, { 'logging': false })
-                .then(function (mockedSequelize) {
+                .then(function () {
                     expect(stubHook.called).to.be.true;
                     expect(stubHook.calledOnce).to.be.true;
                     expect(stubHook.calledWith(sequelizeInstance, sinon.match.instanceOf(Sequelize), { 'logging': false })).to.be.true;
@@ -402,7 +402,7 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stub = sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() =>  Promise.resolve(mockedSequelizeInstance));
+            sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve(mockedSequelizeInstance));
             let stub2 = sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile').callsFake(() => Promise.resolve());
 
             return SequelizeMocking
@@ -435,8 +435,8 @@ describe('SequelizeMocking - ', function () {
                 }
             });
 
-            let stub = sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve(mockedSequelizeInstance));
-            let stub2 = sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile').callsFake(() => Promise.resolve());
+            sinonSandbox.stub(SequelizeMocking, 'create').callsFake(() => Promise.resolve(mockedSequelizeInstance));
+            sinonSandbox.stub(SequelizeMocking, 'loadFixtureFile').callsFake(() => Promise.resolve());
 
             return SequelizeMocking
                 .createAndLoadFixtureFile(sequelizeInstance, 'a/path', { 'logging': false })
@@ -667,7 +667,7 @@ describe('SequelizeMocking - ', function () {
             let fakeObject = {
                 'sync': () => Promise.resolve()
             };
-            let stub = sinonSandbox.stub(SequelizeMocking, 'modifyModelReference').callsFake(() => fakeObject);
+            sinonSandbox.stub(SequelizeMocking, 'modifyModelReference').callsFake(() => fakeObject);
             let spy = sinonSandbox.stub(console, 'log');
 
             SequelizeMocking.hookNewModel(sequelizeInstance, mockedSequelizeInstance, { 'logging': false });
@@ -715,7 +715,7 @@ describe('SequelizeMocking - ', function () {
                 'description': Sequelize.TEXT
             });
 
-            let stub = sinonSandbox.stub(sequelizeFixtures, 'loadFile').callsFake(() => Promise.resolve());
+            sinonSandbox.stub(sequelizeFixtures, 'loadFile').callsFake(() => Promise.resolve());
             let spy = sinonSandbox.spy(SequelizeMocking, 'mapModels');
 
             SequelizeMocking.loadFixtureFile(sequelizeInstance, '/a/path/for/json/file');
@@ -860,7 +860,7 @@ describe('SequelizeMocking - ', function () {
                 // relative to the time of the import.
                 if(data.createdAt
                     && data.createdAt < 0) {
-                    data.createdAt = new Date((new Date()).getTime() + parseFloat(data.createdAt) * 1000 * 60);
+                    data.createdAt = new Date(new Date().getTime() + parseFloat(data.createdAt) * 1000 * 60);
                 }
                 return data;
             }
@@ -1041,7 +1041,7 @@ describe('SequelizeMocking - ', function () {
 
     describe('and the method "modifyModelReference" should ', function () {
         it('exist', function () {
-           expect(SequelizeMocking.modifyModelReference).to.exist;
+            expect(SequelizeMocking.modifyModelReference).to.exist;
         });
 
         it('should override the sequelize property of the specified model with the specified sequelize instance', function () {
@@ -1198,7 +1198,7 @@ describe('SequelizeMocking - ', function () {
 
     describe('and the method "restore" should ', function () {
         it('exist', function () {
-           expect(SequelizeMocking.restoreAndTropTables).to.exist;
+            expect(SequelizeMocking.restoreAndTropTables).to.exist;
         });
 
         it('should call "unhookNewModel" method', async function () {
@@ -1388,7 +1388,7 @@ describe('SequelizeMocking - ', function () {
             });
 
             sequelizeInstance.__originalSequelize = {
-                'removeHook': function (eventName) {
+                'removeHook': function () {
 
                 }
             };
