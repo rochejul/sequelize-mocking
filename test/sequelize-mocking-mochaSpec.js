@@ -25,7 +25,7 @@ const userModelAttributes = {
     name: Sequelize.TEXT
 };
 
-describe.only('sequelizeMockingMocha - ', function () {
+describe('sequelizeMockingMocha - ', function () {
     let sandbox;
 
     beforeEach(function () {
